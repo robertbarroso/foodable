@@ -21,3 +21,6 @@ Work Quality (tests? linting? PRs? Pair-programming?)
 
 **Conflict Management** (what will you do if there is disagreement on how to proceed?)
 > Text goes here...
+
+We need two more things here
+VVVVVV
