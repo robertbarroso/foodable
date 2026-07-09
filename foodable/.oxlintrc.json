@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "node": true,
+    "browser": true,
+    "es2022": true
+  },
+  "globals": {
+    "process": "readonly"
+  },
+  "rules": {
+    "eslint/no-unused-vars": "error",
+    "node/no-process-env": [
+      "error",
+      {
+        "allowedVariables": ["SUPABASE_URL", "SUPABASE_ANON_KEY"]
+      }
+    ]
+  },
+  "ignorePatterns": ["node_modules/", "dist/", "build/"]
+}
