@@ -1,8 +1,66 @@
 # foodable
 
-> Foodable is a web application designed to help users discover healthy, affordable food options from local stores. The platform leverages large language models (LLMs) to provide detailed nutritional information on products, assisting users in making informed choices. Users can create and manage personal grocery lists, find and share recipes with the community, and even use an AI-powered chatbot to generate grocery lists automatically. Foodable offers a comprehensive, AI-enhanced platform for users to make healthier and smarter food choices, with a strong social component to connect with other food enthusiasts.
+> Foodable is a web application designed to help users discover healthy, affordable food options from local stores. The platform leverages large language models (LLMs) to provide detailed nutritional information on products, assisting users in making informed choices. Users can create and manage personal grocery lists, find and share recipes with the community, and even use an AI-powered chatbot to generate grocery lists automatically.
+
+## Repository layout
+
+```
+foodable/                 # repo root
+├── foodable/             # React + Vite app (team frontend)
+│   ├── src/
+│   │   ├── components/   # NavBar, AppRouter, etc.
+│   │   ├── pages/        # GroceryList, SocialFeed, AIChatbot, RecipeList
+│   │   └── services/     # supabase.js, groceryLists.js
+│   └── package.json
+├── docs/                 # Schema and feature docs
+├── README.md
+└── STANDARDS.md
+```
+
+## Quick start
+
+### 1. Install dependencies
+
+Requires **Node.js 20+** (Vite 8).
+
+```bash
+cd foodable
+npm install
+```
+
+### 2. Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Add your Supabase URL and anon key to `foodable/.env`:
+
+```
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_KEY=your-anon-key
+```
+
+### 3. Create database tables
+
+Run `docs/schema.sql` in the [Supabase SQL Editor](https://supabase.com/dashboard).
+
+### 4. Run the app
+
+```bash
+cd foodable
+npm run dev
+```
+
+Open http://localhost:5173 — use `/groceries` for the grocery list page.
+
+## Grocery list docs
+
+- Service + setup: [docs/API.md](docs/API.md)
+- Database schema: [docs/schema.sql](docs/schema.sql)
 
 ## Objectives
+
 The primary objective of Foodable is to simplify the process of finding healthy, affordable foods while leveraging the power of AI to assist users in making better dietary choices. It aims to provide users with a convenient platform where they can:
 
 - Easily discover nutritious and budget-friendly products in their local area.
@@ -13,4 +71,5 @@ The primary objective of Foodable is to simplify the process of finding healthy,
 - Build a social network where users can engage with others through public profiles, sharing, following, and interacting with like-minded individuals.
 
 ## Motivations
+
 The motivations for developing Foodable stem from the growing need for healthier eating habits and the challenges people face in finding nutritious, cost-effective options. Rising food prices, complex nutritional labels, and time constraints make it difficult for individuals and families to maintain balanced diets.

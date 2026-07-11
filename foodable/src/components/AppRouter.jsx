@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import NavBar from "./NavBar.jsx";
 import AIChatbot from "../pages/AIChatbot.jsx";
 import RecipeList from "../pages/RecipeList.jsx";
@@ -10,6 +10,7 @@ export default function AppRouter() {
     <BrowserRouter>
       <NavBar />
       <Routes>
+        <Route path="/" element={<Navigate to="/groceries" replace />} />
         <Route path="/ai-chat" element={<AIChatbot />} />
         <Route path="/recipes" element={<RecipeList />} />
         <Route path="/groceries" element={<GroceryList />} />
