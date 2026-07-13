@@ -1,0 +1,25 @@
+import express from "express";
+import morgan from "morgan";
+import cors from "cors";
+import authRouter from "./routes/auth.js";
+import recipesRouter from "./routes/recipes.js"
+import usersRouter from "./routes/users.js";
+import groceriesRouter from "./routes/groceries.js";
+
+const app = express()
+const PORT = 5000
+
+// Middleware
+app.use(express.json());
+app.use(morgan("dev")); // Request logger middleware (pretty cool!)
+app.use(cors());
+
+// Routes
+app.use("/api/auth", authRouter)
+app.use("/api/recipes", recipesRouter)
+app.use("/api/users", usersRouter)
+app.use("/api/groceries", groceriesRouter)
+
+app.listen(PORT, () => {
+    console.log(`Server is running at port ${PORT}!`)
+})
