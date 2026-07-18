@@ -3,6 +3,7 @@ import {
   createGroceryList,
   createGroceryListItem,
   deleteGroceryList,
+  deleteGroceryListItem,
   getGroceryList,
   listGroceryLists,
   updateGroceryListItem,
@@ -54,6 +55,15 @@ function GroceryList() {
   const [addingItem, setAddingItem] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showPurchased, setShowPurchased] = useState(true);
+  const [editingItem, setEditingItem] = useState(null);
+  const [itemForm, setItemForm] = useState({
+    name: "",
+    quantity: "",
+    category: "",
+    price: "",
+  });
+  const [savingItem, setSavingItem] = useState(false);
+  const [confirmItemDelete, setConfirmItemDelete] = useState(false);
 
   const loadLists = useCallback(async () => {
     setLoading(true);
@@ -89,6 +99,7 @@ function GroceryList() {
     setItemError(null);
     setConfirmDelete(false);
     setQuickAddName("");
+    setEditingItem(null);
 
     try {
       await refreshSelectedList(listId);
@@ -190,22 +201,117 @@ function GroceryList() {
     }
   }
 
+  function handleOpenItemEditor(item) {
+    setEditingItem(item);
+    setItemForm({
+      name: item.name,
+      quantity: item.quantity ?? "",
+      category: item.category ?? "",
+      price: item.price ?? "",
+    });
+    setConfirmItemDelete(false);
+    setItemError(null);
+  }
+
+  function handleCloseItemEditor() {
+    if (savingItem) return;
+
+    setEditingItem(null);
+    setConfirmItemDelete(false);
+    setItemError(null);
+  }
+
+  function handleItemFormChange(event) {
+    const { name, value } = event.target;
+    setItemForm((current) => ({ ...current, [name]: value }));
+  }
+
+  async function handleSaveItem(event) {
+    event.preventDefault();
+    if (!selectedList || !editingItem) return;
+
+    const name = itemForm.name.trim();
+    if (!name) {
+      setItemError("Item name is required");
+      return;
+    }
+
+    setSavingItem(true);
+    setItemError(null);
+
+    try {
+      await updateGroceryListItem(selectedList.id, editingItem.id, {
+        name,
+        quantity: itemForm.quantity.trim() || null,
+        category: itemForm.category.trim() || null,
+        price: itemForm.price === "" ? null : itemForm.price,
+      });
+      await refreshSelectedList(selectedList.id);
+      await loadLists();
+      setEditingItem(null);
+      setConfirmItemDelete(false);
+    } catch (err) {
+      setItemError(err.message);
+    } finally {
+      setSavingItem(false);
+    }
+  }
+
+  async function handleDeleteItem() {
+    if (!selectedList || !editingItem) return;
+
+    if (!confirmItemDelete) {
+      setConfirmItemDelete(true);
+      return;
+    }
+
+    setSavingItem(true);
+    setItemError(null);
+
+    try {
+      await deleteGroceryListItem(selectedList.id, editingItem.id);
+      await refreshSelectedList(selectedList.id);
+      await loadLists();
+      setEditingItem(null);
+      setConfirmItemDelete(false);
+    } catch (err) {
+      setItemError(err.message);
+    } finally {
+      setSavingItem(false);
+    }
+  }
+
   function renderItemRow(item) {
     return (
       <li key={item.id}>
-        <button
-          type="button"
+        <div
           className={`grocery-item-row${item.is_purchased ? " grocery-item-row--done" : ""}`}
-          onClick={() => handleTogglePurchased(item)}
         >
-          <span className="grocery-item-row__check" aria-hidden="true">
-            {item.is_purchased ? "✓" : ""}
-          </span>
-          <span className="grocery-item-row__body">
-            <span className="grocery-item-row__name">{item.name}</span>
-            {item.quantity && <span className="grocery-item-row__qty">{item.quantity}</span>}
-          </span>
-        </button>
+          <button
+            type="button"
+            className="grocery-item-row__toggle"
+            onClick={() => handleTogglePurchased(item)}
+            aria-label={`${item.is_purchased ? "Move" : "Mark"} ${item.name} ${
+              item.is_purchased ? "back to shopping list" : "as purchased"
+            }`}
+          >
+            <span className="grocery-item-row__check" aria-hidden="true">
+              {item.is_purchased ? "✓" : ""}
+            </span>
+            <span className="grocery-item-row__body">
+              <span className="grocery-item-row__name">{item.name}</span>
+              {item.quantity && <span className="grocery-item-row__qty">{item.quantity}</span>}
+            </span>
+          </button>
+          <button
+            type="button"
+            className="grocery-item-row__edit"
+            onClick={() => handleOpenItemEditor(item)}
+            aria-label={`Edit ${item.name}`}
+          >
+            Edit
+          </button>
+        </div>
       </li>
     );
   }
@@ -373,6 +479,108 @@ function GroceryList() {
                 <button type="submit" className="grocery-button grocery-button--primary" disabled={creating}>
                   {creating ? "Creating..." : "Create list"}
                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {editingItem && (
+        <div className="grocery-modal-backdrop" onClick={handleCloseItemEditor}>
+          <div
+            className="grocery-modal"
+            onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-item-title"
+          >
+            <h3 id="edit-item-title" className="grocery-modal__title">Edit item</h3>
+            <p className="grocery-modal__hint">Update shopping details or remove this item.</p>
+
+            <form className="grocery-modal__form" onSubmit={handleSaveItem}>
+              <label className="grocery-modal__field">
+                <span>Name</span>
+                <input
+                  type="text"
+                  name="name"
+                  className="grocery-modal__input"
+                  value={itemForm.name}
+                  onChange={handleItemFormChange}
+                  autoFocus
+                />
+              </label>
+
+              <label className="grocery-modal__field">
+                <span>Quantity</span>
+                <input
+                  type="text"
+                  name="quantity"
+                  className="grocery-modal__input"
+                  placeholder="e.g. 2 lbs, 3 cans"
+                  value={itemForm.quantity}
+                  onChange={handleItemFormChange}
+                />
+              </label>
+
+              <div className="grocery-modal__field-row">
+                <label className="grocery-modal__field">
+                  <span>Category</span>
+                  <input
+                    type="text"
+                    name="category"
+                    className="grocery-modal__input"
+                    placeholder="e.g. Produce"
+                    value={itemForm.category}
+                    onChange={handleItemFormChange}
+                  />
+                </label>
+
+                <label className="grocery-modal__field">
+                  <span>Price</span>
+                  <input
+                    type="number"
+                    name="price"
+                    className="grocery-modal__input"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    value={itemForm.price}
+                    onChange={handleItemFormChange}
+                  />
+                </label>
+              </div>
+
+              {itemError && <p className="grocery-message grocery-message--error">{itemError}</p>}
+              {confirmItemDelete && (
+                <p className="grocery-confirm-text">Click “Confirm delete” to remove this item.</p>
+              )}
+
+              <div className="grocery-modal__actions grocery-modal__actions--split">
+                <button
+                  type="button"
+                  className="grocery-button grocery-button--danger"
+                  onClick={handleDeleteItem}
+                  disabled={savingItem}
+                >
+                  {confirmItemDelete ? "Confirm delete" : "Delete item"}
+                </button>
+                <span className="grocery-modal__action-group">
+                  <button
+                    type="button"
+                    className="grocery-button"
+                    onClick={handleCloseItemEditor}
+                    disabled={savingItem}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="grocery-button grocery-button--primary"
+                    disabled={savingItem}
+                  >
+                    {savingItem ? "Saving..." : "Save"}
+                  </button>
+                </span>
               </div>
             </form>
           </div>
