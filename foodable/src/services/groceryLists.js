@@ -1,161 +1,80 @@
-import { supabase } from "./supabase.js";
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
 
-// Temporary dev fallback until Supabase Auth is added.
-const DEV_USER_ID = "00000000-0000-0000-0000-000000000001";
+async function apiRequest(path, options = {}) {
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
 
-async function getCurrentUserId() {
-  const { data: { user } } = await supabase.auth.getUser();
-  return user?.id ?? DEV_USER_ID;
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.error ?? "Grocery request failed");
+  }
+
+  return data;
 }
 
 export async function listGroceryLists() {
-  const userId = await getCurrentUserId();
-
-  let query = supabase
-    .from("grocery_lists")
-    .select(`
-      id,
-      title,
-      is_public,
-      budget_estimate,
-      created_at,
-      updated_at,
-      grocery_list_items ( is_purchased )
-    `)
-    .order("updated_at", { ascending: false });
-
-  if (userId) {
-    query = query.eq("user_id", userId);
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data;
+  return apiRequest("/groceries");
 }
 
 export async function getGroceryList(listId) {
-  const userId = await getCurrentUserId();
-
-  let query = supabase
-    .from("grocery_lists")
-    .select(`
-      id,
-      title,
-      is_public,
-      budget_estimate,
-      created_at,
-      updated_at,
-      grocery_list_items (
-        id,
-        name,
-        quantity,
-        category,
-        price,
-        is_purchased,
-        created_at,
-        updated_at
-      )
-    `)
-    .eq("id", listId);
-
-  if (userId) {
-    query = query.eq("user_id", userId);
-  }
-
-  const { data, error } = await query.maybeSingle();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  if (!data) {
-    throw new Error("Grocery list not found");
-  }
-
-  return data;
+  return apiRequest(`/groceries/${encodeURIComponent(listId)}`);
 }
 
 export async function createGroceryList({ title, budget_estimate = null, is_public = false }) {
-  const userId = await getCurrentUserId();
-
-  const { data, error } = await supabase
-    .from("grocery_lists")
-    .insert({
-      user_id: userId,
+  return apiRequest("/groceries", {
+    method: "POST",
+    body: JSON.stringify({
       title,
       is_public,
       budget_estimate,
-    })
-    .select("id, title, is_public, budget_estimate, created_at, updated_at")
-    .single();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data;
+    }),
+  });
 }
 
 export async function createGroceryListItem(listId, { name, quantity = null, category = null, price = null }) {
-  const { data, error } = await supabase
-    .from("grocery_list_items")
-    .insert({
-      list_id: listId,
+  return apiRequest(`/groceries/${encodeURIComponent(listId)}/items`, {
+    method: "POST",
+    body: JSON.stringify({
       name,
       quantity,
       category,
       price,
-    })
-    .select("id, name, quantity, category, price, is_purchased, created_at, updated_at")
-    .single();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data;
+    }),
+  });
 }
 
-export async function updateGroceryListItem(itemId, updates) {
-  const { data, error } = await supabase
-    .from("grocery_list_items")
-    .update(updates)
-    .eq("id", itemId)
-    .select("id, name, quantity, category, price, is_purchased, created_at, updated_at")
-    .single();
+export async function updateGroceryList(listId, updates) {
+  return apiRequest(`/groceries/${encodeURIComponent(listId)}`, {
+    method: "PATCH",
+    body: JSON.stringify(updates),
+  });
+}
 
-  if (error) {
-    throw new Error(error.message);
-  }
+export async function updateGroceryListItem(listId, itemId, updates) {
+  return apiRequest(
+    `/groceries/${encodeURIComponent(listId)}/items/${encodeURIComponent(itemId)}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(updates),
+    },
+  );
+}
 
-  return data;
+export async function deleteGroceryListItem(listId, itemId) {
+  return apiRequest(
+    `/groceries/${encodeURIComponent(listId)}/items/${encodeURIComponent(itemId)}`,
+    { method: "DELETE" },
+  );
 }
 
 export async function deleteGroceryList(listId) {
-  const userId = await getCurrentUserId();
-
-  let query = supabase
-    .from("grocery_lists")
-    .delete()
-    .eq("id", listId);
-
-  if (userId) {
-    query = query.eq("user_id", userId);
-  }
-
-  const { data, error } = await query.select("id").maybeSingle();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  if (!data) {
-    throw new Error("Grocery list not found");
-  }
-
-  return data;
+  return apiRequest(`/groceries/${encodeURIComponent(listId)}`, {
+    method: "DELETE",
+  });
 }

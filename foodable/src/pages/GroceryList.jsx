@@ -180,7 +180,9 @@ function GroceryList() {
     setItemError(null);
 
     try {
-      await updateGroceryListItem(item.id, { is_purchased: !item.is_purchased });
+      await updateGroceryListItem(selectedList.id, item.id, {
+        is_purchased: !item.is_purchased,
+      });
       await refreshSelectedList(selectedList.id);
       await loadLists();
     } catch (err) {
