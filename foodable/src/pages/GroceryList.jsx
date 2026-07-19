@@ -6,6 +6,7 @@ import {
   deleteGroceryListItem,
   getGroceryList,
   listGroceryLists,
+  updateGroceryList,
   updateGroceryListItem,
 } from "../services/groceryLists.js";
 import "./GroceryList.css";
@@ -64,6 +65,14 @@ function GroceryList() {
   });
   const [savingItem, setSavingItem] = useState(false);
   const [confirmItemDelete, setConfirmItemDelete] = useState(false);
+  const [isEditingList, setIsEditingList] = useState(false);
+  const [listForm, setListForm] = useState({
+    title: "",
+    budget_estimate: "",
+    is_public: false,
+  });
+  const [savingList, setSavingList] = useState(false);
+  const [listSettingsError, setListSettingsError] = useState(null);
 
   const loadLists = useCallback(async () => {
     setLoading(true);
@@ -100,6 +109,7 @@ function GroceryList() {
     setConfirmDelete(false);
     setQuickAddName("");
     setEditingItem(null);
+    setIsEditingList(false);
 
     try {
       await refreshSelectedList(listId);
@@ -153,6 +163,7 @@ function GroceryList() {
       await deleteGroceryList(selectedList.id);
       setSelectedList(null);
       setConfirmDelete(false);
+      setIsEditingList(false);
       await loadLists();
     } catch (err) {
       setError(err.message);
@@ -198,6 +209,70 @@ function GroceryList() {
       await loadLists();
     } catch (err) {
       setItemError(err.message);
+    }
+  }
+
+  function handleOpenListSettings() {
+    if (!selectedList) return;
+
+    setListForm({
+      title: selectedList.title,
+      budget_estimate: selectedList.budget_estimate ?? "",
+      is_public: selectedList.is_public,
+    });
+    setListSettingsError(null);
+    setIsEditingList(true);
+  }
+
+  function handleCloseListSettings() {
+    if (savingList) return;
+
+    setIsEditingList(false);
+    setListSettingsError(null);
+  }
+
+  function handleListFormChange(event) {
+    const { name, type, checked, value } = event.target;
+    setListForm((current) => ({
+      ...current,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  }
+
+  async function handleSaveListSettings(event) {
+    event.preventDefault();
+    if (!selectedList) return;
+
+    const title = listForm.title.trim();
+    const budgetEstimate =
+      listForm.budget_estimate === "" ? null : Number(listForm.budget_estimate);
+
+    if (!title) {
+      setListSettingsError("List name is required");
+      return;
+    }
+
+    if (budgetEstimate !== null && (!Number.isFinite(budgetEstimate) || budgetEstimate < 0)) {
+      setListSettingsError("Budget estimate must be a non-negative number");
+      return;
+    }
+
+    setSavingList(true);
+    setListSettingsError(null);
+
+    try {
+      await updateGroceryList(selectedList.id, {
+        title,
+        budget_estimate: budgetEstimate,
+        is_public: listForm.is_public,
+      });
+      await refreshSelectedList(selectedList.id);
+      await loadLists();
+      setIsEditingList(false);
+    } catch (err) {
+      setListSettingsError(err.message);
+    } finally {
+      setSavingList(false);
     }
   }
 
@@ -367,7 +442,7 @@ function GroceryList() {
         {!selectedList ? (
           <div className="grocery-empty">
             <h2>Pick a list</h2>
-            <p>Add items as you think of them — like Our Groceries.</p>
+            <p>Add items as you think of them.</p>
           </div>
         ) : (
           <>
@@ -379,6 +454,13 @@ function GroceryList() {
                 </p>
               </div>
               <div className="grocery-content__actions">
+                <button
+                  type="button"
+                  className="grocery-button"
+                  onClick={handleOpenListSettings}
+                >
+                  Settings
+                </button>
                 {confirmDelete ? (
                   <>
                     <span className="grocery-confirm-text">Delete list?</span>
@@ -461,7 +543,7 @@ function GroceryList() {
             aria-labelledby="new-list-title"
           >
             <h3 id="new-list-title" className="grocery-modal__title">New list</h3>
-            <p className="grocery-modal__hint">Name your shopping list — e.g. Costco, Weekly, Party</p>
+            <p className="grocery-modal__hint">Name your shopping list. Examples: Costco, Weekly, Party.</p>
             <form className="grocery-modal__form" onSubmit={handleCreateList}>
               <input
                 type="text"
@@ -478,6 +560,87 @@ function GroceryList() {
                 </button>
                 <button type="submit" className="grocery-button grocery-button--primary" disabled={creating}>
                   {creating ? "Creating..." : "Create list"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isEditingList && selectedList && (
+        <div className="grocery-modal-backdrop" onClick={handleCloseListSettings}>
+          <div
+            className="grocery-modal"
+            onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="list-settings-title"
+          >
+            <h3 id="list-settings-title" className="grocery-modal__title">List settings</h3>
+            <p className="grocery-modal__hint">Update the list name, budget, and visibility.</p>
+
+            <form className="grocery-modal__form" onSubmit={handleSaveListSettings}>
+              <label className="grocery-modal__field">
+                <span>List name</span>
+                <input
+                  type="text"
+                  name="title"
+                  className="grocery-modal__input"
+                  value={listForm.title}
+                  onChange={handleListFormChange}
+                  disabled={savingList}
+                  autoFocus
+                />
+              </label>
+
+              <label className="grocery-modal__field">
+                <span>Budget estimate</span>
+                <input
+                  type="number"
+                  name="budget_estimate"
+                  className="grocery-modal__input"
+                  min="0"
+                  step="0.01"
+                  placeholder="No budget"
+                  value={listForm.budget_estimate}
+                  onChange={handleListFormChange}
+                  disabled={savingList}
+                />
+              </label>
+
+              <label className="grocery-visibility-control">
+                <span>
+                  <strong>Public list</strong>
+                  <small>Allow this list to be shared with the community.</small>
+                </span>
+                <input
+                  type="checkbox"
+                  name="is_public"
+                  checked={listForm.is_public}
+                  onChange={handleListFormChange}
+                  disabled={savingList}
+                />
+              </label>
+
+              {listSettingsError && (
+                <p className="grocery-message grocery-message--error">{listSettingsError}</p>
+              )}
+
+              <div className="grocery-modal__actions">
+                <button
+                  type="button"
+                  className="grocery-button"
+                  onClick={handleCloseListSettings}
+                  disabled={savingList}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="grocery-button grocery-button--primary"
+                  disabled={savingList}
+                >
+                  {savingList ? "Saving..." : "Save settings"}
                 </button>
               </div>
             </form>
