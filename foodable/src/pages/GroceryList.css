@@ -316,6 +316,36 @@
   gap: 0.75rem;
 }
 
+.grocery-visibility-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  color: #1c1917;
+  cursor: pointer;
+}
+
+.grocery-visibility-control span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.grocery-visibility-control small {
+  color: #78716c;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.grocery-visibility-control input {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  accent-color: #059669;
+}
+
 .grocery-modal__input {
   width: 100%;
   padding: 0.75rem 1rem;
