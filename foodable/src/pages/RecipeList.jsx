@@ -37,7 +37,7 @@ export default function Recipe() {
           padding: "20px"
       }}>Recipes</h1>
       {isLoading && <h1>Loading...</h1>}
-      {!isLoading && <AddRecipe />}
+      {!isLoading && <AddRecipe recipeList={recipeList} setRecipeList={setRecipeList}/>}
       {!isLoading && recipeList.length > 0 && <div className="recipe-list"
       style={{
         display: "flex",

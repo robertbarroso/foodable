@@ -12,7 +12,7 @@ export default function RecipeCard({recipe, recipeList, setRecipeList}) {
         }}
         >
         <h2>{recipe.title}</h2>
-        <p>{recipe.description}</p>
+        {recipe?.description ? <p>{recipe.description}</p> : null}
         <h3>Macronutrients</h3>
         <ul>
             <li>Calories: {recipe.calories}</li>
@@ -31,7 +31,7 @@ export default function RecipeCard({recipe, recipeList, setRecipeList}) {
         </ul>
         <p>
             <strong>Total Ingredient Cost:</strong> $
-            {recipe.ingredient_cost.toFixed(2)}
+            {recipe?.ingredient_cost ? recipe.ingredient_cost.toFixed(2): null}
         </p>
         <h3>Instructions</h3>
         <ol>
