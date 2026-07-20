@@ -4,14 +4,12 @@ import fakeAuth from "../utils/fakeAuth.js";
 
 const router = express.Router();
 
+// GET: All current social posts
 router.get("/", fakeAuth, async (req, res) => {
   try {
-    const userId = req.user.id;
-
     const { data, error } = await supabase
-      .from("recipes")
-      .select("*")
-      .eq("user_id", userId);
+      .from("posts")
+      .select("*, profiles (username)");
 
     if (error) {
       return res.status(400).json({
@@ -22,7 +20,7 @@ router.get("/", fakeAuth, async (req, res) => {
     res.json(data);
   } catch (error) {
     res.status(500).json({
-      error: "Server error",
+      error: "ERROR: Server error",
     });
   }
 });

@@ -3,7 +3,7 @@
 
 export default function fakeAuth(req, res, next) {
   req.user = {
-    id: "4cf6e045-fa38-4019-9d25-5d0075962464"
+    id: "4cf6e045-fa38-4019-9d25-5d0075962464",
   };
 
   next();

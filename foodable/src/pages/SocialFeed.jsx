@@ -1,31 +1,24 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../services/supabase.js";
 
-function SocialFeed() {
+export default function SocialFeed() {
   const [posts, setPosts] = useState([]);
   const [selected_post, setSelectedPost] = useState(null);
 
   // When the page refreshes
   useEffect(() => {
-    const fetchPosts = async () => {
-      const { data, error } = await supabase.from("posts").select(`
-    *,
-    author:profiles!posts_user_id_fkey (
-      username
-    )
-  `);
+    async function fetchAllSocialPosts() {
+      try {
+        const response = await fetch("http://localhost:5001/api/social-posts");
+        const data = await response.json();
 
-      // If something goes wrong, send error
-      if (error) {
+        console.log(data);
+
+        setPosts(data);
+      } catch (error) {
         console.error(error);
-        return;
       }
-
-      setPosts(data);
-      console.log(JSON.stringify(data, null, 2));
-    };
-
-    fetchPosts();
+    }
+    fetchAllSocialPosts();
   }, []);
 
   function loadSelectedContent() {
@@ -59,10 +52,16 @@ function SocialFeed() {
                 >
                   <h4>{post.title} </h4>
                   <p className="post-author-render">
-                    By {post.author?.username}
+                    <i>By {post.profiles?.username}</i>
                   </p>
 
-                  <p className="likes-render"> ♥︎ {post.likes} </p>
+                  <div className="pill-container">
+                    <p className="pill-render likes-render">♥︎ {post.likes}</p>
+
+                    <p className="pill-render tag-render">
+                      {post.post_type === 1 ? "Recipe" : "Grocery"}
+                    </p>
+                  </div>
                 </button>
               </div>
             );
@@ -73,5 +72,3 @@ function SocialFeed() {
     </>
   );
 }
-
-export default SocialFeed;
