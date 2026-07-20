@@ -9,7 +9,7 @@ export default function Home() {
             <div id="home-content">
                 <h2>The App for Food Budgeting, Discovering Local Products, and Recipes for Delicious and Nutritious Meals</h2>
             </div>
-            <img src={foodimg} alt="Plant Images" id="food-img" />
+            <img src={foodimg} alt="Food Image" id="food-img" />
         </div>
         <footer>
             <p>&copy; 2026 Foodable. All rights reserved.</p>
