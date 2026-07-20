@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import AddRecipe from "../components/AddRecipe";
+import RecipeCard from "../components/RecipeCard";
 
 export default function Recipe() {
 
@@ -11,6 +13,7 @@ export default function Recipe() {
         const response = await fetch("http://localhost:5000/api/recipes")
         const data = await response.json()
         
+        console.log(data)
         setRecipeList(data);
         setIsLoading(false);
 
@@ -20,7 +23,6 @@ export default function Recipe() {
     }
     getRecipeFromUser()
   }, [])
-
 
   return (
     <div 
@@ -34,47 +36,21 @@ export default function Recipe() {
         style={{
           padding: "20px"
       }}>Recipes</h1>
-      {!isLoading ? <div className="recipe-list">
+      {isLoading && <h1>Loading...</h1>}
+      {!isLoading && <AddRecipe recipeList={recipeList} setRecipeList={setRecipeList}/>}
+      {!isLoading && recipeList.length > 0 && <div className="recipe-list"
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "10px",
+        justifyContent: "center",
+        padding: "10px"
+      }}>
         {recipeList.map((recipe) => (
-          <div
-            key={recipe.id}
-            style={{
-              border: "1px solid lightgray",
-              padding: "10px",
-              backgroundColor: "white"
-            }}
-          >
-            <h2>{recipe.title}</h2>
-            <p>{recipe.description}</p>
-            <h3>Macronutrients</h3>
-            <ul>
-              <li>Calories: {recipe.calories}</li>
-              <li>Protein: {recipe.protein}g</li>
-              <li>Carbs: {recipe.carbs}g</li>
-              <li>Fat: {recipe.fat}g</li>
-            </ul>
-            <h3>Ingredients</h3>
-            <ul>
-              {recipe.ingredients.map((ingredient, index) => (
-                <li key={index}>
-                  {ingredient.quantity} {ingredient.name} - $
-                  {ingredient.cost.toFixed(2)}
-                </li>
-              ))}
-            </ul>
-            <p>
-              <strong>Total Ingredient Cost:</strong> $
-              {recipe.ingredient_cost.toFixed(2)}
-            </p>
-            <h3>Instructions</h3>
-            <ol>
-              {recipe.instructions.map((step, index) => (
-                <li key={index}>{step}</li>
-              ))}
-            </ol>
-          </div>
+          <RecipeCard recipe={recipe} key={recipe.id} recipeList={recipeList} setRecipeList={setRecipeList}/>
         ))}
-      </div> : <h1>Loading...</h1>}
+      </div>}
+      {!isLoading && !recipeList.length && <h1>No recipes to display...</h1>}
     </div>
   );
   
