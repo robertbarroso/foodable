@@ -1,36 +1,14 @@
-import "dotenv/config";
 import express from "express";
-import cors from "cors";
 import axios from "axios";
 
-const app = express();
-const port = process.env.PORT || 3002;
+const router = express.Router();
 
 const NVIDIA_API_URL =
   "https://integrate.api.nvidia.com/v1/chat/completions";
 
 const NVIDIA_MODEL = "mistralai/mistral-medium-3.5-128b";
 
-if (!process.env.NVIDIA_API_KEY) {
-  throw new Error("NVIDIA_API_KEY is missing from ai-service/.env");
-}
-
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-  }),
-);
-
-app.use(express.json());
-
-app.get("/health", (req, res) => {
-  res.json({
-    status: "Foodable AI service is running.",
-    mockMode: process.env.USE_MOCK_AI === "true",
-  });
-});
-
-app.post("/chat", async (req, res) => {
+router.post("/", async (req, res) => {
   const message = req.body?.message;
 
   if (typeof message !== "string" || !message.trim()) {
@@ -41,15 +19,18 @@ app.post("/chat", async (req, res) => {
 
   const cleanedMessage = message.trim();
 
-  // Temporary development mode.
-  // When USE_MOCK_AI=true, this returns a fake AI response
-  // without contacting NVIDIA.
   if (process.env.USE_MOCK_AI === "true") {
     console.log(`Mock AI request: "${cleanedMessage}"`);
 
     return res.json({
       reply: createMockReply(cleanedMessage),
       mock: true,
+    });
+  }
+
+  if (!process.env.NVIDIA_API_KEY) {
+    return res.status(500).json({
+      error: "The NVIDIA API key is not configured.",
     });
   }
 
@@ -270,9 +251,4 @@ Grocery prices and availability vary by location.
   `.trim();
 }
 
-app.listen(port, () => {
-  const mockMode = process.env.USE_MOCK_AI === "true";
-
-  console.log(`Foodable AI service running at http://localhost:${port}`);
-  console.log(`Mock AI mode: ${mockMode ? "ON" : "OFF"}`);
-});
+export default router;

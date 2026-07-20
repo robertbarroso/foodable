@@ -1,6 +1,6 @@
 // src/services/chatService.js
 
-const AI_SERVICE_URL = "http://localhost:3002";
+const AI_SERVICE_URL = "http://localhost:5000/api";
 
 export async function sendChatMessage(message) {
   try {
@@ -18,7 +18,7 @@ export async function sendChatMessage(message) {
 
     if (!response.ok) {
       throw new Error(
-        data.error || "Foodable could not contact the AI service.",
+        data.error || "Foodable could not contact the server.",
       );
     }
 
@@ -29,7 +29,7 @@ export async function sendChatMessage(message) {
     console.error("Chat Service Error:", error);
 
     throw new Error(
-      error.message || "Unable to connect to the Foodable AI service.",
+      error.message || "Unable to connect to the Foodable server.",
     );
   }
 }

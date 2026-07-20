@@ -12,6 +12,9 @@ function NavBar() {
       <NavLink id="nav-bar-design" to="/groceries">
         Groceries
       </NavLink>
+      <NavLink id="nav-bar-design" to="/discovery">
+        Discovery
+      </NavLink>
       <NavLink id="nav-bar-design" to="/community">
         Community
       </NavLink>

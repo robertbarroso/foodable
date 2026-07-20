@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
@@ -21,6 +22,9 @@ app.use("/api/recipes", recipesRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/groceries", groceriesRouter);
 app.use("/api/social-posts", socialPostsRouter);
+app.use("/api/discovery", discoveryRouter);
+app.use("/api/chat", chatRouter);
+
 
 app.listen(PORT, () => {
   console.log(`Server is running at port ${PORT}!`);

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import AddRecipe from "../components/AddRecipe";
+import RecipeCard from "../components/RecipeCard";
 
 export default function Recipe() {
   const [recipeList, setRecipeList] = useState([]);

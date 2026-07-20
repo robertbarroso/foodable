@@ -26,26 +26,48 @@ Requires **Node.js 20+** (Vite 8).
 ```bash
 cd foodable
 npm install
+
+cd ../server
+npm install
 ```
 
 ### 2. Configure environment
 
 ```bash
 cp .env.example .env
+cd ../server
+cp .env.example .env
 ```
 
-Add your Supabase URL and anon key to `foodable/.env`:
+Add the frontend configuration to `foodable/.env`:
 
 ```
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_KEY=your-anon-key
+VITE_API_URL=http://localhost:5000/api
 ```
+
+Add server-only Supabase credentials to `server/.env`:
+
+```
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_KEY=your-service-role-key
+```
+
+Never expose the service-role key in a `VITE_` variable.
 
 ### 3. Create database tables
 
 Run `docs/schema.sql` in the [Supabase SQL Editor](https://supabase.com/dashboard).
 
 ### 4. Run the app
+
+```bash
+cd server
+npm run dev
+```
+
+In a second terminal:
 
 ```bash
 cd foodable

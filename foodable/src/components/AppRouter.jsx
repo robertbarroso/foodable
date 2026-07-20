@@ -4,6 +4,7 @@ import AIChatbot from "../pages/AIChatbot.jsx";
 import RecipeList from "../pages/RecipeList.jsx";
 import GroceryList from "../pages/GroceryList.jsx";
 import SocialFeed from "../pages/SocialFeed.jsx";
+import Discovery from "../pages/Discovery";
 
 export default function AppRouter() {
   return (
@@ -15,6 +16,7 @@ export default function AppRouter() {
         <Route path="/recipes" element={<RecipeList />} />
         <Route path="/groceries" element={<GroceryList />} />
         <Route path="/community" element={<SocialFeed />} />
+        <Route path="/discovery" element={<Discovery />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { sendChatMessage } from "../services/chatService.js";
 
 const starterMessage = {
@@ -119,7 +120,11 @@ function AIChat() {
               {message.role === "user" ? "You" : "Foodable"}
             </strong>
 
-            <p>{message.content}</p>
+            {message.role === "assistant" ? (
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+            ) : (
+              <p>{message.content}</p>
+            )}
           </article>
         ))}
 
