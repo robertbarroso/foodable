@@ -72,8 +72,7 @@ a.active#nav-bar-design {
   text-align: center;
 }
 
-.likes-render {
-  background-color: #079a70;
+.pill-render {
   text-align: center;
   padding-left: 10px;
   padding-right: 10px;
@@ -84,6 +83,21 @@ a.active#nav-bar-design {
   border-radius: 30px;
   font-weight: 700;
   color: white;
+}
+
+.pill-container {
+  display: flex;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  gap: 10px;
+}
+
+.likes-render {
+  background-color: #079a70;
+}
+
+.tag-render {
+  background-color: rgb(87, 87, 225);
 }
 
 .likes-render:hover {
