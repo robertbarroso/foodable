@@ -72,7 +72,7 @@ export default function AddRecipe({recipeList, setRecipeList}) {
                 instructions
             }
 
-            const response = await fetch("http://localhost:5000/api/recipes", {
+            const response = await fetch("http://localhost:5001/api/recipes", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
