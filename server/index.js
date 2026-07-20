@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
@@ -5,6 +6,8 @@ import authRouter from "./routes/auth.js";
 import recipesRouter from "./routes/recipes.js"
 import usersRouter from "./routes/users.js";
 import groceriesRouter from "./routes/groceries.js";
+import discoveryRouter from "./routes/discovery.js";
+import chatRouter from "./routes/chat.js";
 
 const app = express()
 const PORT = 5000
@@ -19,6 +22,9 @@ app.use("/api/auth", authRouter)
 app.use("/api/recipes", recipesRouter)
 app.use("/api/users", usersRouter)
 app.use("/api/groceries", groceriesRouter)
+app.use("/api/discovery", discoveryRouter);
+app.use("/api/chat", chatRouter);
+
 
 app.listen(PORT, () => {
     console.log(`Server is running at port ${PORT}!`)
