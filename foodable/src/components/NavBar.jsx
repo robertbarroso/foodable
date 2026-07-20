@@ -3,6 +3,9 @@ import { NavLink } from "react-router-dom";
 function NavBar() {
   return (
     <nav>
+      <NavLink id="nav-bar-design" to="/">
+        Home
+      </NavLink>
       <NavLink id="nav-bar-design" to="/ai-chat">
         AI Chat
       </NavLink>
