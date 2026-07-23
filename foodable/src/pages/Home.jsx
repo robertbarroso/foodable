@@ -4,6 +4,7 @@ import SignUpForm from "../components/SignForm";
 
 export default function Home() {
   return (
+  return (
     <div id="home-area">
       <h3 id="home-header">Welcome to Foodable</h3>
       <div id="home-separator">
@@ -21,4 +22,6 @@ export default function Home() {
       </footer>
     </div>
   );
+  );
 }
+

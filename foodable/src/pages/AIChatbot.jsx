@@ -67,9 +67,7 @@ function AIChat() {
       <header className="ai-chat-header">
         <h1>Foodable AI Assistant</h1>
 
-        <p>
-          Get help creating affordable meals, grocery lists, and recipes.
-        </p>
+        <p>Get help creating affordable meals, grocery lists, and recipes.</p>
       </header>
 
       <section className="suggested-prompts">
@@ -100,9 +98,7 @@ function AIChat() {
         <button
           type="button"
           onClick={() =>
-            handleSuggestedPrompt(
-              "Suggest three affordable vegetarian meals.",
-            )
+            handleSuggestedPrompt("Suggest three affordable vegetarian meals.")
           }
           disabled={isLoading}
         >
@@ -116,9 +112,7 @@ function AIChat() {
             className={`chat-message chat-message-${message.role}`}
             key={`${message.role}-${index}`}
           >
-            <strong>
-              {message.role === "user" ? "You" : "Foodable"}
-            </strong>
+            <strong>{message.role === "user" ? "You" : "Foodable"}</strong>
 
             {message.role === "assistant" ? (
               <ReactMarkdown>{message.content}</ReactMarkdown>
@@ -153,10 +147,7 @@ function AIChat() {
             disabled={isLoading}
           />
 
-          <button
-            type="submit"
-            disabled={isLoading || !input.trim()}
-          >
+          <button type="submit" disabled={isLoading || !input.trim()}>
             {isLoading ? "Thinking..." : "Send"}
           </button>
         </div>
