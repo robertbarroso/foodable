@@ -4,9 +4,14 @@ function SignUpForm() {
   // User input states
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [username, setUserName] = useState("");
-  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  // For sign-up
+  const [usernameSignUp, setUserNameSignUp] = useState("");
+  const [passwordSignUp, setPasswordSignUp] = useState("");
+
+  // For sign-In
+  const [usernameSignIn, setUserNameSignIn] = useState("");
+  const [passwordSignIn, setPasswordSignIn] = useState("");
 
   const handleFirstName = (event) => {
     setFirstName(event.target.value);
@@ -20,18 +25,88 @@ function SignUpForm() {
     setEmail(event.target.value);
   };
 
-  const handleUsername = (event) => {
-    setUserName(event.target.value);
+  const handleUsernameSignUp = (event) => {
+    setUserNameSignUp(event.target.value);
   };
 
-  const handlePassword = (event) => {
-    setPassword(event.target.value);
+  const handleUsernameSignIn = (event) => {
+    setUserNameSignIn(event.target.value);
+  };
+
+  const handlePasswordSignUp = (event) => {
+    setPasswordSignUp(event.target.value);
+  };
+
+  const handlePasswordSignIn = (event) => {
+    setPasswordSignIn(event.target.value);
+  };
+
+  /* 
+  Supabase Functions
+    handleSignUp -> Prepares for signup
+    handleSignIn -> Prepares for signin
+  */
+  const handleSignUp = async (event) => {
+    event.preventDefault();
+
+    try {
+      const signupForm = {
+        firstName,
+        lastName,
+        email,
+        usernameSignUp,
+        passwordSignUp,
+      };
+
+      const signupResponse = await fetch(
+        "http://localhost:5001/api/auth/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(signupForm),
+        },
+      );
+
+      const signupData = await signupResponse.json();
+      console.log(signupData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSignIn = async (event) => {
+    event.preventDefault();
+
+    try {
+      const signinForm = {
+        email,
+        passwordSignIn,
+      };
+
+      const signinResponse = await fetch(
+        "http://localhost:5001/api/auth/signin",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(signinForm),
+        },
+      );
+
+      const signinData = await signinResponse.json();
+      console.log(signinData);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <div id="user-auth">
       <section id="sign-up-form">
-        <form id="sign-up-section">
+        <form id="sign-up-section" onSubmit={handleSignUp}>
           <h3>Sign Up</h3>
           <label htmlFor="first-name-input"></label>
 
@@ -69,18 +144,18 @@ function SignUpForm() {
             className="sign-up-textfield"
             id="username-input"
             type="text"
-            value={username}
-            onChange={handleUsername}
+            value={usernameSignUp}
+            onChange={handleUsernameSignUp}
             placeholder="Username"
           ></input>
 
           <label htmlFor="password-input"></label>
           <input
             className="sign-up-textfield"
-            id="password-input"
-            type="text"
-            value={password}
-            onChange={handlePassword}
+            id="password-input-signup"
+            type="password"
+            value={passwordSignUp}
+            onChange={handlePasswordSignUp}
             placeholder="Password"
           ></input>
 
@@ -96,24 +171,24 @@ function SignUpForm() {
 
       <section id="sign-in-form">
         <h3>Sign In</h3>
-        <form id="sign-in-section">
-          <label htmlFor="username-input"></label>
+        <form id="sign-in-section" onSubmit={handleSignIn}>
+          <label htmlFor="email-input"></label>
           <input
             className="sign-up-textfield"
-            id="username-input"
+            id="email-input"
             type="text"
-            value={username}
-            onChange={handleUsername}
-            placeholder="Username"
+            value={email}
+            onChange={handleEmail}
+            placeholder="Email"
           ></input>
 
           <label htmlFor="password-input"></label>
           <input
             className="sign-up-textfield"
-            id="password-input"
-            type="text"
-            value={password}
-            onChange={handlePassword}
+            id="password-input-signin"
+            type="password"
+            value={passwordSignIn}
+            onChange={handlePasswordSignIn}
             placeholder="Password"
           ></input>
 
