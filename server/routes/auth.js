@@ -1,15 +1,44 @@
 import express from "express";
+import supabase from "../supabase.js";
 
 const authRouter = express.Router();
 
 // ----- Sign Up -----
-authRouter.post("/signup", (req, res) => {
-  console.log("RECIEVED: User information for: sign up");
-  console.log(req.body);
+authRouter.post("/signup", async (req, res) => {
+  const { firstName, lastName, email, usernameSignUp, passwordSignUp } =
+    req.body;
 
-  res.status(200).json({
-    message: "RECIEVED: Sign up content from user!",
-  });
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password: passwordSignUp,
+    });
+
+    console.log("SUPABASE DATA:");
+    console.log(data);
+
+    console.log("SUPABASE ERROR:");
+    console.log(error);
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    return res.status(201).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
 
 // ----- Sign In -----
