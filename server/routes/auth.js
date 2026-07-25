@@ -9,10 +9,23 @@ authRouter.post("/signup", async (req, res) => {
     req.body;
 
   try {
+    // This will create a user within Supabase
+    // This is NOT in the 'profiles' tab - yet.
     const { data, error } = await supabase.auth.signUp({
       email,
       password: passwordSignUp,
     });
+
+    // Add the above to the profiles tab
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .insert({
+        id: data.user.id,
+        first_name: firstName,
+        last_name: lastName,
+        username: usernameSignUp,
+        email: email,
+      });
 
     console.log("SUPABASE DATA:");
     console.log(data);
