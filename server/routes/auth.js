@@ -16,16 +16,17 @@ authRouter.post("/signup", async (req, res) => {
       password: passwordSignUp,
     });
 
+    console.log("DATA:", data);
+    console.log("ERROR:", error);
+
     // Add the above to the profiles tab
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .insert({
-        id: data.user.id,
-        first_name: firstName,
-        last_name: lastName,
-        username: usernameSignUp,
-        email: email,
-      });
+    const { error: profileError } = await supabase.from("profiles").insert({
+      id: data.user.id,
+      first_name: firstName,
+      last_name: lastName,
+      username: usernameSignUp,
+      email: email,
+    });
 
     console.log("SUPABASE DATA:");
     console.log(data);
@@ -55,13 +56,31 @@ authRouter.post("/signup", async (req, res) => {
 });
 
 // ----- Sign In -----
-authRouter.post("/signin", (req, res) => {
-  console.log("RECIEVED: User information for: sign in");
-  console.log(req.body);
+authRouter.post("/signin", async (req, res) => {
+  try {
+    const { email, passwordSignIn } = req.body;
 
-  res.status(200).json({
-    message: "RECIEVED: Sign in content from user!",
-  });
+    console.log(email);
+    console.log(passwordSignIn);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: passwordSignIn,
+    });
+
+    if (error) {
+      res.status(400).json({
+        success: false,
+        message: "ERROR: Failed to sign in",
+      });
+    }
+
+    res.status(200).json({
+      message: "RECIEVED: Sign in content from user!",
+    });
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 export default authRouter;
