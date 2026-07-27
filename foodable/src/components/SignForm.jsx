@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function SignUpForm() {
+  const navigate = useNavigate();
+
   // User input states
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -72,12 +74,12 @@ function SignUpForm() {
 
       const signupData = await signupResponse.json();
       console.log(signupData);
+
+      if (signupData.success) {
+        navigate("/");
+      }
     } catch (error) {
       console.error(error);
-    }
-
-    if (signupData.success) {
-      // navigate("/");
     }
   };
 
@@ -102,12 +104,21 @@ function SignUpForm() {
       );
 
       const signinData = await signinResponse.json();
-      console.log(signinData);
+      console.log("SIGNIN DATA: -----------", signinData);
+      console.log("PROFILE: -----------", signinData.profile);
+
+      if (signinData.success) {
+        // Change context for application - localStorage
+        localStorage.setItem(
+          "currentUser",
+          JSON.stringify(signinData.profile[0]),
+        );
+
+        // Navigate back to home
+        navigate("/");
+      }
     } catch (error) {
       console.error(error);
-    }
-    if (signinData.success) {
-      // navigate("/");
     }
   };
 

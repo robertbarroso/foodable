@@ -16,8 +16,13 @@ authRouter.post("/signup", async (req, res) => {
       password: passwordSignUp,
     });
 
-    console.log("DATA:", data);
-    console.log("ERROR:", error);
+    // Error checking for if no signup.
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
 
     // Add the above to the profiles tab
     const { error: profileError } = await supabase.from("profiles").insert({
@@ -28,16 +33,12 @@ authRouter.post("/signup", async (req, res) => {
       email: email,
     });
 
-    console.log("SUPABASE DATA:");
-    console.log(data);
+    console.log("PROFILE ERROR:", profileError);
 
-    console.log("SUPABASE ERROR:");
-    console.log(error);
-
-    if (error) {
+    if (profileError) {
       return res.status(400).json({
         success: false,
-        message: error.message,
+        message: profileError.message,
       });
     }
 
@@ -64,19 +65,35 @@ authRouter.post("/signin", async (req, res) => {
     console.log(passwordSignIn);
 
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
+      email,
       password: passwordSignIn,
     });
 
     if (error) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "ERROR: Failed to sign in",
       });
     }
 
-    res.status(200).json({
-      message: "RECIEVED: Sign in content from user!",
+    const { data: profileData, error: profileError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", data.user.id);
+    //.single();
+
+    console.log("USER ID:", data.user.id);
+
+    if (profileError) {
+      return res.status(400).json({
+        success: false,
+        message: profileError.message,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      profile: profileData,
     });
   } catch (error) {
     console.error(error);
