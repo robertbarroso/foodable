@@ -1,6 +1,12 @@
+import { useState } from "react";
 import DeleteRecipe from "./DeleteRecipe";
+import Modal from "./Modal";
+import EditRecipe from "./EditRecipe";
 
 export default function RecipeCard({recipe, recipeList, setRecipeList}) {
+
+    const [isOpen, setIsOpen] = useState(false)
+
     return (
     <div
         key={recipe.id}
@@ -40,6 +46,10 @@ export default function RecipeCard({recipe, recipeList, setRecipeList}) {
             ))}
         </ol>
         <div>
+            <button onClick={() => setIsOpen(true)}>Edit Recipe</button>
+            <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+                <EditRecipe recipe={recipe} recipeList={recipeList} setRecipeList={setRecipeList} setIsOpen={setIsOpen}/>
+            </Modal>
             <DeleteRecipe id={recipe.id} recipeList={recipeList} setRecipeList={setRecipeList} />
         </div>
     </div>)
