@@ -1,6 +1,5 @@
 import "./Home.css";
 import foodimg from "../assets/free-source-food-img.jpg";
-import SignUpForm from "../components/SignForm";
 
 export default function Home() {
   return (
@@ -12,7 +11,6 @@ export default function Home() {
             The App for Food Budgeting, Discovering Local Products, and Recipes
             for Delicious and Nutritious Meals!
           </h2>
-          <SignUpForm />
         </div>
         <img src={foodimg} alt="Plant Images" id="food-img" />
       </div>

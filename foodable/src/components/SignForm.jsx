@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function SignUpForm() {
   // User input states
@@ -74,6 +75,10 @@ function SignUpForm() {
     } catch (error) {
       console.error(error);
     }
+
+    if (signupData.success) {
+      // navigate("/");
+    }
   };
 
   const handleSignIn = async (event) => {
@@ -100,6 +105,9 @@ function SignUpForm() {
       console.log(signinData);
     } catch (error) {
       console.error(error);
+    }
+    if (signinData.success) {
+      // navigate("/");
     }
   };
 
