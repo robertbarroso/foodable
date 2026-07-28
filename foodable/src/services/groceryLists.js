@@ -22,6 +22,20 @@ export async function listGroceryLists() {
   return apiRequest("/groceries");
 }
 
+export async function listPublicGroceryLists() {
+  return apiRequest("/groceries/public");
+}
+
+export async function getPublicGroceryList(listId) {
+  return apiRequest(`/groceries/public/${encodeURIComponent(listId)}`);
+}
+
+export async function copyPublicGroceryList(listId) {
+  return apiRequest(`/groceries/public/${encodeURIComponent(listId)}/copy`, {
+    method: "POST",
+  });
+}
+
 export async function getGroceryList(listId) {
   return apiRequest(`/groceries/${encodeURIComponent(listId)}`);
 }

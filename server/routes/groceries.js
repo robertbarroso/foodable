@@ -1,6 +1,12 @@
 import express from "express";
 import supabase from "../supabase.js";
 import fakeAuth from "../utils/fakeAuth.js";
+import {
+  copyPublicListForUser,
+  findPublicList,
+  publishGroceryListToCommunity,
+  unpublishGroceryListFromCommunity,
+} from "../utils/groceryPublic.js";
 
 const groceriesRouter = express.Router();
 
@@ -28,7 +34,10 @@ async function findOwnedList(listId, userId) {
 }
 
 async function requireOwnedList(req, res) {
-  const { data: list, error } = await findOwnedList(req.params.listId, req.user.id);
+  const { data: list, error } = await findOwnedList(
+    req.params.listId,
+    req.user.id,
+  );
 
   if (error) {
     res.status(500).json({ error: error.message });
@@ -43,10 +52,69 @@ async function requireOwnedList(req, res) {
   return list;
 }
 
+async function syncCommunityVisibility(list, userId) {
+  if (list.is_public) {
+    return publishGroceryListToCommunity(list, userId);
+  }
+
+  return unpublishGroceryListFromCommunity(list.id);
+}
+
+// Public routes must be registered before /:listId so "public" is not treated as an id.
+groceriesRouter.get("/public", async (req, res) => {
+  const { data, error } = await supabase
+    .from("grocery_lists")
+    .select(
+      `
+      id,
+      user_id,
+      title,
+      is_public,
+      budget_estimate,
+      created_at,
+      updated_at,
+      grocery_list_items ( id )
+    `,
+    )
+    .eq("is_public", true)
+    .order("updated_at", { ascending: false });
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.json(data);
+});
+
+groceriesRouter.get("/public/:listId", async (req, res) => {
+  const { data, error } = await findPublicList(req.params.listId);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  if (!data) {
+    return res.status(404).json({ error: "Public grocery list not found" });
+  }
+
+  return res.json(data);
+});
+
+groceriesRouter.post("/public/:listId/copy", async (req, res) => {
+  const result = await copyPublicListForUser(req.params.listId, req.user.id);
+
+  if (result.error) {
+    return res.status(result.status).json({ error: result.error.message });
+  }
+
+  return res.status(result.status).json(result.data);
+});
+
 groceriesRouter.get("/", async (req, res) => {
   const { data, error } = await supabase
     .from("grocery_lists")
-    .select(`
+    .select(
+      `
       id,
       title,
       is_public,
@@ -54,7 +122,8 @@ groceriesRouter.get("/", async (req, res) => {
       created_at,
       updated_at,
       grocery_list_items ( is_purchased )
-    `)
+    `,
+    )
     .eq("user_id", req.user.id)
     .order("updated_at", { ascending: false });
 
@@ -68,7 +137,8 @@ groceriesRouter.get("/", async (req, res) => {
 groceriesRouter.get("/:listId", async (req, res) => {
   const { data, error } = await supabase
     .from("grocery_lists")
-    .select(`
+    .select(
+      `
       id,
       title,
       is_public,
@@ -85,7 +155,8 @@ groceriesRouter.get("/:listId", async (req, res) => {
         created_at,
         updated_at
       )
-    `)
+    `,
+    )
     .eq("id", req.params.listId)
     .eq("user_id", req.user.id)
     .maybeSingle();
@@ -111,7 +182,9 @@ groceriesRouter.post("/", async (req, res) => {
   }
 
   if (Number.isNaN(budgetEstimate)) {
-    return res.status(400).json({ error: "Budget estimate must be a non-negative number" });
+    return res
+      .status(400)
+      .json({ error: "Budget estimate must be a non-negative number" });
   }
 
   if (typeof isPublic !== "boolean") {
@@ -133,6 +206,16 @@ groceriesRouter.post("/", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 
+  if (data.is_public) {
+    const { error: publishError } = await syncCommunityVisibility(
+      data,
+      req.user.id,
+    );
+    if (publishError) {
+      console.error("Community publish failed:", publishError.message);
+    }
+  }
+
   return res.status(201).json(data);
 });
 
@@ -140,7 +223,8 @@ groceriesRouter.patch("/:listId", async (req, res) => {
   const updates = {};
 
   if ("title" in req.body) {
-    const title = typeof req.body.title === "string" ? req.body.title.trim() : "";
+    const title =
+      typeof req.body.title === "string" ? req.body.title.trim() : "";
     if (!title) {
       return res.status(400).json({ error: "List name is required" });
     }
@@ -157,13 +241,17 @@ groceriesRouter.patch("/:listId", async (req, res) => {
   if ("budget_estimate" in req.body) {
     const budgetEstimate = normalizeNullablePrice(req.body.budget_estimate);
     if (Number.isNaN(budgetEstimate)) {
-      return res.status(400).json({ error: "Budget estimate must be a non-negative number" });
+      return res
+        .status(400)
+        .json({ error: "Budget estimate must be a non-negative number" });
     }
     updates.budget_estimate = budgetEstimate;
   }
 
   if (Object.keys(updates).length === 0) {
-    return res.status(400).json({ error: "No valid list fields were provided" });
+    return res
+      .status(400)
+      .json({ error: "No valid list fields were provided" });
   }
 
   const { data, error } = await supabase
@@ -180,6 +268,21 @@ groceriesRouter.patch("/:listId", async (req, res) => {
 
   if (!data) {
     return res.status(404).json({ error: "Grocery list not found" });
+  }
+
+  const shouldSyncCommunity =
+    "is_public" in updates ||
+    "title" in updates ||
+    "budget_estimate" in updates;
+
+  if (shouldSyncCommunity) {
+    const { error: publishError } = await syncCommunityVisibility(
+      data,
+      req.user.id,
+    );
+    if (publishError) {
+      console.error("Community publish failed:", publishError.message);
+    }
   }
 
   return res.json(data);
@@ -216,7 +319,9 @@ groceriesRouter.post("/:listId/items", async (req, res) => {
   }
 
   if (Number.isNaN(price)) {
-    return res.status(400).json({ error: "Price must be a non-negative number" });
+    return res
+      .status(400)
+      .json({ error: "Price must be a non-negative number" });
   }
 
   const { data, error } = await supabase
@@ -228,7 +333,9 @@ groceriesRouter.post("/:listId/items", async (req, res) => {
       category: normalizeNullableText(req.body.category),
       price,
     })
-    .select("id, name, quantity, category, price, is_purchased, created_at, updated_at")
+    .select(
+      "id, name, quantity, category, price, is_purchased, created_at, updated_at",
+    )
     .single();
 
   if (error) {
@@ -262,7 +369,9 @@ groceriesRouter.patch("/:listId/items/:itemId", async (req, res) => {
   if ("price" in req.body) {
     const price = normalizeNullablePrice(req.body.price);
     if (Number.isNaN(price)) {
-      return res.status(400).json({ error: "Price must be a non-negative number" });
+      return res
+        .status(400)
+        .json({ error: "Price must be a non-negative number" });
     }
     updates.price = price;
   }
@@ -275,7 +384,9 @@ groceriesRouter.patch("/:listId/items/:itemId", async (req, res) => {
   }
 
   if (Object.keys(updates).length === 0) {
-    return res.status(400).json({ error: "No valid item fields were provided" });
+    return res
+      .status(400)
+      .json({ error: "No valid item fields were provided" });
   }
 
   const { data, error } = await supabase
@@ -283,7 +394,9 @@ groceriesRouter.patch("/:listId/items/:itemId", async (req, res) => {
     .update(updates)
     .eq("id", req.params.itemId)
     .eq("list_id", req.params.listId)
-    .select("id, name, quantity, category, price, is_purchased, created_at, updated_at")
+    .select(
+      "id, name, quantity, category, price, is_purchased, created_at, updated_at",
+    )
     .maybeSingle();
 
   if (error) {

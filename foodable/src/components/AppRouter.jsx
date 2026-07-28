@@ -6,6 +6,7 @@ import RecipeList from "../pages/RecipeList.jsx";
 import GroceryList from "../pages/GroceryList.jsx";
 import SocialFeed from "../pages/SocialFeed.jsx";
 import Discovery from "../pages/Discovery";
+import UserAuth from "../pages/UserAuth.jsx";
 
 export default function AppRouter() {
   return (
@@ -18,6 +19,7 @@ export default function AppRouter() {
         <Route path="/groceries" element={<GroceryList />} />
         <Route path="/community" element={<SocialFeed />} />
         <Route path="/discovery" element={<Discovery />} />
+        <Route path="user-auth" element={<UserAuth />} />
       </Routes>
     </BrowserRouter>
   );

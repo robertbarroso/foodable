@@ -17,9 +17,7 @@ export async function sendChatMessage(message) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(
-        data.error || "Foodable could not contact the server.",
-      );
+      throw new Error(data.error || "Foodable could not contact the server.");
     }
 
     return {
