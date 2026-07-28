@@ -1,27 +1,31 @@
 import { NavLink } from "react-router-dom";
+import UserAuth from "./UserAuth";
 
 function NavBar() {
   return (
-    <nav>
-      <NavLink id="nav-bar-design" to="/">
-        Home
-      </NavLink>
-      <NavLink id="nav-bar-design" to="/ai-chat">
-        AI Chat
-      </NavLink>
-      <NavLink id="nav-bar-design" to="/recipes">
-        Recipes
-      </NavLink>
-      <NavLink id="nav-bar-design" to="/groceries">
-        Groceries
-      </NavLink>
-      <NavLink id="nav-bar-design" to="/discovery">
-        Discovery
-      </NavLink>
-      <NavLink id="nav-bar-design" to="/community">
-        Community
-      </NavLink>
-    </nav>
+    <>
+      <nav>
+        <NavLink id="nav-bar-design" to="/">
+          Home
+        </NavLink>
+        <NavLink id="nav-bar-design" to="/ai-chat">
+          AI Chat
+        </NavLink>
+        <NavLink id="nav-bar-design" to="/recipes">
+          Recipes
+        </NavLink>
+        <NavLink id="nav-bar-design" to="/groceries">
+          Groceries
+        </NavLink>
+        <NavLink id="nav-bar-design" to="/discovery">
+          Discovery
+        </NavLink>
+        <NavLink id="nav-bar-design" to="/community">
+          Community
+        </NavLink>
+        <UserAuth />
+      </nav>
+    </>
   );
 }
 

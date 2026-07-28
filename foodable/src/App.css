@@ -28,6 +28,23 @@ a.active#nav-bar-design {
   color: #047857;
 }
 
+#nav-bar-user-auth {
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #efedeb;
+  background-color: #079a70;
+  border-style: hidden;
+  margin-left: auto;
+}
+
+#nav-bar-user-auth:hover {
+  background-color: #10ae81;
+  cursor: pointer;
+}
+
 /* Social Feed Community */
 
 .content-container {
@@ -328,11 +345,7 @@ a.active#nav-bar-design {
   position: sticky;
   bottom: 0;
   padding-top: 1rem;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0),
-    #ffffff 22%
-  );
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #ffffff 22%);
 }
 
 .chat-form label {
