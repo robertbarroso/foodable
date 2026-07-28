@@ -1,6 +1,7 @@
+import { useEffect, useState } from "react";
 import useRecipeForm from "../hooks/useRecipeForm";
 
-export default function AddRecipe({recipeList, setRecipeList, setIsOpen}) {
+export default function EditRecipe({recipe, recipeList, setRecipeList, setIsOpen}) {
 
     // Taken from custom hook to compartamentalize add recipe and edit recipe
     const {
@@ -21,15 +22,21 @@ export default function AddRecipe({recipeList, setRecipeList, setIsOpen}) {
         removeIngredient,
         addInstruction,
         removeInstruction,
-        resetForm,
         totalIngredientCost,
+        loadRecipe
     } = useRecipeForm();
+ 
+    useEffect(() => {
+        if (recipe) {
+            loadRecipe(recipe)
+        }
+    }, [recipe])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
         try {
-            const recipe = {
+            const editedRecipe = {
                 title,
                 description,
                 calories: Number(calories),
@@ -42,20 +49,23 @@ export default function AddRecipe({recipeList, setRecipeList, setIsOpen}) {
                 is_public: isPublic
             }
 
-            const response = await fetch("http://localhost:5001/api/recipes", {
-                method: "POST",
+            const response = await fetch(`http://localhost:5001/api/recipes/${recipe.id}`, {
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(recipe)
+                body: JSON.stringify(editedRecipe)
             })
 
             const data = await response.json()
             console.log(data);
 
-            setRecipeList([...recipeList, data])
+            setRecipeList((prevRecipes) =>
+                prevRecipes.map((recipe) =>
+                    recipe.id === data.id ? data : recipe
+                )
+            );
             setIsOpen(false)
-            resetForm()
         } catch (error) {
             console.error(error)
         }
@@ -63,7 +73,7 @@ export default function AddRecipe({recipeList, setRecipeList, setIsOpen}) {
 
     return <>
         <form onSubmit={handleSubmit}>
-            <h2>Add Recipe</h2>
+            <h2>Edit Recipe</h2>
 
             <input
                 type="text"
@@ -167,7 +177,7 @@ export default function AddRecipe({recipeList, setRecipeList, setIsOpen}) {
                 </label>
             </div>
             <div>
-                <button type="submit">Add Recipe</button>
+                <button type="submit">Update Recipe</button>
             </div>
         </form>
     </>

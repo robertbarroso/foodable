@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import AddRecipe from "../components/AddRecipe";
 import RecipeCard from "../components/RecipeCard";
+import Modal from "../components/Modal";
 
 export default function Recipe() {
 
   const [recipeList, setRecipeList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     async function getRecipeFromUser() {
@@ -36,8 +38,12 @@ export default function Recipe() {
         style={{
           padding: "20px"
       }}>Recipes</h1>
-      {isLoading && <h1>Loading...</h1>}
-      {!isLoading && <AddRecipe recipeList={recipeList} setRecipeList={setRecipeList}/>}
+      {!isLoading && <>
+        <button onClick={() => setIsOpen(true)}>Add New Recipe +</button>
+        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+          <AddRecipe recipeList={recipeList} setRecipeList={setRecipeList} setIsOpen={setIsOpen} />
+        </Modal>
+      </>}
       {!isLoading && recipeList.length > 0 && <div className="recipe-list"
       style={{
         display: "flex",

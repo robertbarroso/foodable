@@ -30,43 +30,56 @@ recipesRouter.get("/", fakeAuth, async (req, res) => {
 
 // Add a recipe for a user's account
 recipesRouter.post("/", fakeAuth, async (req, res) => {
-  try {
-    const userId = req.user.id;
+    try {
+        const userId = req.user.id;
 
-    const {
-      title,
-      description,
-      calories,
-      protein,
-      carbs,
-      fat,
-      ingredients,
-      instructions,
-      ingredient_cost,
-    } = req.body;
+        const {
+            title,
+            description,
+            calories,
+            protein,
+            carbs,
+            fat,
+            ingredients,
+            instructions,
+            ingredient_cost,
+            is_public
+        } = req.body;
 
-    const { data, error } = await supabase
-      .from("recipes")
-      .insert([
-        {
-          user_id: userId,
-          title,
-          description,
-          calories,
-          protein,
-          carbs,
-          fat,
-          ingredients,
-          instructions,
-          ingredient_cost,
-        },
-      ])
-      .select();
 
-    if (error) {
-      return res.status(400).json({
-        error: error.message,
-      });
+        const { data, error } = await supabase
+            .from("recipes")
+            .insert([
+                {
+                    user_id: userId,
+                    title,
+                    description,
+                    calories,
+                    protein,
+                    carbs,
+                    fat,
+                    ingredients,
+                    instructions,
+                    ingredient_cost,
+                    is_public
+                }
+            ])
+            .select()
+
+
+        if (error) {
+            return res.status(400).json({
+                error: error.message
+            })
+        }
+
+
+        res.status(201).json(data[0]);
+
+    } catch (error) {
+        res.status(500).json({
+            error: "Server error"
+        })
     }
 
     res.status(201).json(data[0]);
@@ -75,6 +88,63 @@ recipesRouter.post("/", fakeAuth, async (req, res) => {
       error: "Server error",
     });
   }
+});
+
+// updates a user's recipe
+recipesRouter.patch("/:id", fakeAuth, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const recipeId = req.params.id;
+
+        const {
+            title,
+            description,
+            calories,
+            protein,
+            carbs,
+            fat,
+            ingredients,
+            instructions,
+            ingredient_cost,
+            is_public
+        } = req.body;
+
+        const { data, error } = await supabase
+            .from("recipes")
+            .update({
+                title,
+                description,
+                calories,
+                protein,
+                carbs,
+                fat,
+                ingredients,
+                instructions,
+                ingredient_cost,
+                is_public
+            })
+            .eq("id", recipeId)
+            .eq("user_id", userId)
+            .select();
+
+        if (error) {
+            return res.status(400).json({
+                error: error.message
+            });
+        }
+
+        if (data.length === 0) {
+            return res.status(404).json({
+                error: "Recipe not found"
+            });
+        }
+
+        res.status(200).json(data[0]);
+    } catch (error) {
+        res.status(500).json({
+            error: "Server error"
+        });
+    }
 });
 
 // Delete a user's recipe
