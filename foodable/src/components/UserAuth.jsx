@@ -1,28 +1,14 @@
-import { useEffect, useState } from "react";
+import { selectUser } from "../auth/UserContext";
 import { NavLink } from "react-router-dom";
 
 export default function UserAuth() {
-  const [currentUser, setCurrentUser] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("currentUser"));
-    } catch {
-      return null;
-    }
-  });
+  const { currentUser } = selectUser();
 
-  useEffect(() => {
-    const syncUser = () => {
-      try {
-        setCurrentUser(JSON.parse(localStorage.getItem("currentUser")));
-      } catch {
-        setCurrentUser(null);
-      }
-    };
-    window.addEventListener("storage", syncUser);
-    return () => window.removeEventListener("storage", syncUser);
-  }, []);
+  let buttonText = "Log in / Sign up";
 
-  const buttonText = currentUser ? currentUser.first_name : "Log in / Sign up";
+  if (currentUser) {
+    buttonText = `Hello, ${currentUser.first_name}`;
+  }
 
   return (
     <NavLink id="nav-bar-user-auth" to="/user-auth">

@@ -79,10 +79,8 @@ authRouter.post("/signin", async (req, res) => {
     const { data: profileData, error: profileError } = await supabase
       .from("profiles")
       .select("*")
-      .eq("id", data.user.id);
-    //.single();
-
-    console.log("USER ID:", data.user.id);
+      .eq("id", data.user.id)
+      .single();
 
     if (profileError) {
       return res.status(400).json({

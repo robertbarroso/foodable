@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+// Context
+import { selectUser } from "../auth/UserContext.jsx";
+
 function SignUpForm() {
   const navigate = useNavigate();
+  const { setCurrentUser } = selectUser();
 
   // User input states
   const [firstName, setFirstName] = useState("");
@@ -104,17 +108,16 @@ function SignUpForm() {
       );
 
       const signinData = await signinResponse.json();
-      console.log("SIGNIN DATA: -----------", signinData);
-      console.log("PROFILE: -----------", signinData.profile);
+      console.log("signinData");
+      console.log(signinData);
 
       if (signinData.success) {
-        // Change context for application - localStorage
-        localStorage.setItem(
-          "currentUser",
-          JSON.stringify(signinData.profile[0]),
-        );
+        console.log("PROFILE FOUND:", signinData.profile);
 
-        // Navigate back to home
+        // If success, set the current user from context
+        console.log("SETTING USER:", signinData.profile);
+        setCurrentUser(signinData.profile);
+
         navigate("/");
       }
     } catch (error) {
