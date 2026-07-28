@@ -77,7 +77,7 @@ function SignUpForm() {
       );
 
       const signupData = await signupResponse.json();
-      console.log(signupData);
+      // DEBUG ->console.log(signupData);
 
       if (signupData.success) {
         navigate("/");
@@ -108,14 +108,14 @@ function SignUpForm() {
       );
 
       const signinData = await signinResponse.json();
-      console.log("signinData");
-      console.log(signinData);
+      // DEBUG ->console.log("signinData");
+      // DEBUG ->console.log(signinData);
 
       if (signinData.success) {
-        console.log("PROFILE FOUND:", signinData.profile);
+        // DEBUG ->console.log("PROFILE FOUND:", signinData.profile);
 
         // If success, set the current user from context
-        console.log("SETTING USER:", signinData.profile);
+        // DEBUG -> console.log("SETTING USER:", signinData.profile);
         setCurrentUser(signinData.profile);
 
         navigate("/");
