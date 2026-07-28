@@ -1,6 +1,6 @@
 // src/services/chatService.js
 
-const AI_SERVICE_URL = "http://localhost:5000/api";
+const AI_SERVICE_URL = "http://localhost:5001/api";
 
 export async function sendChatMessage(message) {
   try {
@@ -32,4 +32,36 @@ export async function sendChatMessage(message) {
       error.message || "Unable to connect to the Foodable server.",
     );
   }
+}
+
+//  Load previous chat history
+export async function getChatHistory() {
+  const response = await fetch(
+    "http://localhost:5001/api/chat/history",
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.error || "Unable to load chat history.",
+    );
+  }
+
+  return data.messages;
+}
+
+//  Delete chat history
+export async function clearChatHistory() {
+  const response = await fetch(`${AI_SERVICE_URL}/chat/history`, {
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Unable to clear chat history.");
+  }
+
+  return data;
 }

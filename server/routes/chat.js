@@ -1,14 +1,68 @@
 import express from "express";
 import axios from "axios";
+import fakeAuth from "../utils/fakeAuth.js";
+import supabase from "../supabase.js";
 
 const router = express.Router();
 
 const NVIDIA_API_URL =
   "https://integrate.api.nvidia.com/v1/chat/completions";
 
-const NVIDIA_MODEL = "mistralai/mistral-medium-3.5-128b";
+const NVIDIA_MODEL =
+  process.env.NVIDIA_MODEL || "meta/llama-3.1-8b-instruct";
 
-router.post("/", async (req, res) => {
+
+// Route for loading saved chat history
+router.get("/history", fakeAuth, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("chat_messages")
+      .select("id, role, content, created_at")
+      .eq("user_id", req.user.id)
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return res.json({
+      messages: data || [],
+    });
+  } catch (error) {
+    console.error("Unable to load chat history:", error);
+
+    return res.status(500).json({
+      error: "Unable to load chat history.",
+    });
+  }
+});
+
+// Clear all chat history for the current user
+router.delete("/history", fakeAuth, async (req, res) => {
+  try {
+    const { error } = await supabase
+      .from("chat_messages")
+      .delete()
+      .eq("user_id", req.user.id);
+
+    if (error) {
+      throw error;
+    }
+
+    res.json({
+      message: "Chat history cleared.",
+    });
+  } catch (error) {
+    console.error("Error clearing chat history:", error);
+
+    res.status(500).json({
+      error: "Unable to clear chat history.",
+    });
+  }
+});
+
+// fakeAuth middleware
+router.post("/", fakeAuth, async (req, res) => {
   const message = req.body?.message;
 
   if (typeof message !== "string" || !message.trim()) {
@@ -19,11 +73,31 @@ router.post("/", async (req, res) => {
 
   const cleanedMessage = message.trim();
 
+  // Get the fake logged-in user's ID
+  const userId = req.user.id;
+
+  // Save the user's message
+  await saveChatMessage(
+    userId,
+    "user",
+    cleanedMessage,
+  );
+
   if (process.env.USE_MOCK_AI === "true") {
     console.log(`Mock AI request: "${cleanedMessage}"`);
 
+    // Store the mock response in a variable
+    const mockReply = createMockReply(cleanedMessage);
+
+    // Save the mock assistant message
+    await saveChatMessage(
+      userId,
+      "assistant",
+      mockReply,
+    );
+
     return res.json({
-      reply: createMockReply(cleanedMessage),
+      reply: mockReply,
       mock: true,
     });
   }
@@ -88,8 +162,19 @@ Do not diagnose medical conditions or provide medical treatment.
       });
     }
 
+    // Clean the assistant response once
+    const cleanedReply = reply.trim();
+
+    // Save the assistant response
+    await saveChatMessage(
+      userId,
+      "assistant",
+      cleanedReply,
+    );
+
+    // Return cleanedReply 
     return res.json({
-      reply: reply.trim(),
+      reply: cleanedReply,
       mock: false,
     });
   } catch (error) {
@@ -116,6 +201,26 @@ Do not diagnose medical conditions or provide medical treatment.
     });
   }
 });
+
+
+// Helper function for saving messages
+async function saveChatMessage(userId, role, content) {
+  const { error } = await supabase
+    .from("chat_messages")
+    .insert({
+      user_id: userId,
+      role,
+      content,
+    });
+
+  if (error) {
+    console.error(
+      `Unable to save ${role} message:`,
+      error,
+    );
+  }
+}
+
 
 function createMockReply(message) {
   const lowerMessage = message.toLowerCase();

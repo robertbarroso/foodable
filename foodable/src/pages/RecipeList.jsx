@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import AddRecipe from "../components/AddRecipe";
 import RecipeCard from "../components/RecipeCard";
+import AICreationModal from "../components/AICreationModal";
 
 export default function Recipe() {
 
-  const [recipeList, setRecipeList] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [recipeList, setRecipeList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showAICreation, setShowAICreation] = useState(false);
 
   useEffect(() => {
     async function getRecipeFromUser() {
@@ -36,6 +38,16 @@ export default function Recipe() {
         style={{
           padding: "20px"
       }}>Recipes</h1>
+
+       {!isLoading && (
+        <button
+          type="button"
+          onClick={() => setShowAICreation(true)}
+        >
+          Create Recipe with AI
+        </button>
+      )}
+
       {isLoading && <h1>Loading...</h1>}
       {!isLoading && <AddRecipe recipeList={recipeList} setRecipeList={setRecipeList}/>}
       {!isLoading && recipeList.length > 0 && <div className="recipe-list"
@@ -50,8 +62,20 @@ export default function Recipe() {
           <RecipeCard recipe={recipe} key={recipe.id} recipeList={recipeList} setRecipeList={setRecipeList}/>
         ))}
       </div>}
-      {!isLoading && !recipeList.length && <h1>No recipes to display...</h1>}
+      {!isLoading && !recipeList.length && (
+        <h1>No recipes to display...</h1>
+      )}
+
+      {showAICreation && (
+        <AICreationModal
+          mode="recipe"
+          onClose={() => setShowAICreation(false)}
+          onCreated={(recipe) => {
+            console.log(recipe);
+            setShowAICreation(false);
+          }}
+        />
+      )}
     </div>
   );
-  
 }
