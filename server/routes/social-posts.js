@@ -85,9 +85,14 @@ router.post("/:postId/heart", async (req, res) => {
     let copiedList = null;
 
     if (post.grocery_list_id) {
-      const copyResult = await copyPublicListForUser(post.grocery_list_id, req.user.id);
+      const copyResult = await copyPublicListForUser(
+        post.grocery_list_id,
+        req.user.id,
+      );
       if (copyResult.error) {
-        return res.status(copyResult.status).json({ error: copyResult.error.message });
+        return res
+          .status(copyResult.status)
+          .json({ error: copyResult.error.message });
       }
       copiedList = copyResult.data;
     }
@@ -102,5 +107,9 @@ router.post("/:postId/heart", async (req, res) => {
     return res.status(500).json({ error: "ERROR: Server error" });
   }
 });
+
+// RECIPES: When 'is_public' is set to true
+
+// GROCERIES: When 'is_public' is set to true
 
 export default router;
