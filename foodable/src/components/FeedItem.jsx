@@ -2,6 +2,7 @@
 // Objective:
 //      Determine if the incoming data is either or and send to the approrpriate component.
 
+import GroceryPost from "./GroceryPost";
 import RecipePost from "./RecipePost";
 
 export default function FeedItem({ incoming_data }) {
@@ -27,10 +28,6 @@ export default function FeedItem({ incoming_data }) {
   }
   // If incoming is -> Grocery List
   if (incoming_data.grocery_list_id) {
-    return (
-      <div>
-        <p>Grocery List found!</p>
-      </div>
-    );
+    return <GroceryPost grocery_post={incoming_data} />;
   }
 }
