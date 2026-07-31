@@ -4,6 +4,8 @@ import {
   getPublicGroceryList,
   listPublicGroceryLists,
 } from "../services/groceryLists.js";
+import FeedItemTest from "../components/FeedItemTest.jsx";
+import RecipePost from "../components/RecipePost.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
 
@@ -140,10 +142,13 @@ export default function SocialFeed() {
         return;
       }
 
-      const response = await fetch(`${API_URL}/social-posts/${item.post_id}/heart`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        `${API_URL}/social-posts/${item.post_id}/heart`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
       const data = await response.json();
 
       if (!response.ok) {
@@ -160,7 +165,8 @@ export default function SocialFeed() {
         setSelectedItem((current) => ({
           ...current,
           likes: data.post?.likes ?? current.likes,
-          grocery_list_id: data.post?.grocery_list_id ?? current.grocery_list_id,
+          grocery_list_id:
+            data.post?.grocery_list_id ?? current.grocery_list_id,
         }));
       }
 
@@ -171,7 +177,9 @@ export default function SocialFeed() {
             : "You already hearted this post.",
         );
       } else if (data.copiedList) {
-        setActionMessage(`Saved "${data.copiedList.title}" to your grocery lists.`);
+        setActionMessage(
+          `Saved "${data.copiedList.title}" to your grocery lists.`,
+        );
       } else {
         setActionMessage("Thanks for the heart!");
       }
@@ -252,11 +260,18 @@ export default function SocialFeed() {
         <section id="post-list">
           <h2>Community</h2>
           {loading && <p className="community-message">Loading community...</p>}
-          {actionError && <p className="community-message community-message--error">{actionError}</p>}
-          {actionMessage && <p className="community-message">{actionMessage}</p>}
+          {actionError && (
+            <p className="community-message community-message--error">
+              {actionError}
+            </p>
+          )}
+          {actionMessage && (
+            <p className="community-message">{actionMessage}</p>
+          )}
           {!loading && feedItems.length === 0 && (
             <p className="community-message">
-              No shared posts yet. Mark a grocery list as Public in Settings to share it here.
+              No shared posts yet. Mark a grocery list as Public in Settings to
+              share it here.
             </p>
           )}
           {feedItems.map((item) => {
@@ -297,6 +312,7 @@ export default function SocialFeed() {
         </section>
         <section id="content-view">{loadSelectedContent()}</section>
       </section>
+      <FeedItemTest />
     </>
   );
 }
