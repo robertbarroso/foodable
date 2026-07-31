@@ -9,6 +9,7 @@ import groceriesRouter from "./routes/groceries.js";
 import socialPostsRouter from "./routes/social-posts.js";
 import discoveryRouter from "./routes/discovery.js";
 import chatRouter from "./routes/chat.js";
+import testPostRouter from "./routes/test-post.js";
 
 const app = express();
 const PORT = 5001;
@@ -26,6 +27,9 @@ app.use("/api/groceries", groceriesRouter);
 app.use("/api/social-posts", socialPostsRouter);
 app.use("/api/discovery", discoveryRouter);
 app.use("/api/chat", chatRouter);
+
+// Tests
+app.use("/test/test_post", testPostRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running at port ${PORT}!`);
