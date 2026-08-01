@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react"; // Added useEffect
 import ReactMarkdown from "react-markdown";
-import { sendChatMessage } from "../services/chatService.js";
+import {
+  sendChatMessage,
+  getChatHistory, // Import history loader
+  clearChatHistory,
+} from "../services/chatService.js";
 
 const starterMessage = {
   role: "assistant",
@@ -12,7 +16,35 @@ function AIChat() {
   const [messages, setMessages] = useState([starterMessage]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Loading state while fetching previous chat history
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+
   const [error, setError] = useState("");
+
+  // Load previous chat history when the page first loads
+  useEffect(() => {
+    async function loadChatHistory() {
+      try {
+        const savedMessages = await getChatHistory();
+
+        if (savedMessages.length > 0) {
+          setMessages(savedMessages);
+        }
+      } catch (historyError) {
+        console.error("Unable to load chat history:", historyError);
+
+        setError(
+          historyError.message ||
+            "Foodable could not load your previous messages.",
+        );
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    }
+
+    loadChatHistory();
+  }, []);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -62,12 +94,46 @@ function AIChat() {
     setError("");
   }
 
+  // Clear the user's saved chat history
+async function handleClearChat() {
+  const shouldClear = window.confirm(
+    "Are you sure you want to clear your chat history?",
+  );
+
+  if (!shouldClear) {
+    return;
+  }
+
+  try {
+    await clearChatHistory();
+
+    // Reset the chat window back to the starter message
+    setMessages([starterMessage]);
+    setError("");
+  } catch (clearError) {
+    console.error("Unable to clear chat history:", clearError);
+
+    setError(
+      clearError.message ||
+        "Unable to clear chat history.",
+    );
+  }
+}
   return (
     <main className="ai-chat-page">
       <header className="ai-chat-header">
         <h1>Foodable AI Assistant</h1>
 
         <p>Get help creating affordable meals, grocery lists, and recipes.</p>
+
+        <button
+          type="button"
+          onClick={handleClearChat}
+          disabled={isLoading || isLoadingHistory}
+        >
+          Clear Chat
+        </button>
+        
       </header>
 
       <section className="suggested-prompts">
@@ -107,20 +173,30 @@ function AIChat() {
       </section>
 
       <section className="chat-messages" aria-live="polite">
-        {messages.map((message, index) => (
-          <article
-            className={`chat-message chat-message-${message.role}`}
-            key={`${message.role}-${index}`}
-          >
-            <strong>{message.role === "user" ? "You" : "Foodable"}</strong>
 
-            {message.role === "assistant" ? (
-              <ReactMarkdown>{message.content}</ReactMarkdown>
-            ) : (
-              <p>{message.content}</p>
-            )}
-          </article>
-        ))}
+        {/* Display while previous messages are loading */}
+        {isLoadingHistory && (
+          <p className="loading-message">
+            Loading previous messages...
+          </p>
+        )}
+
+        {/* Wait until history finishes loading before rendering messages */}
+        {!isLoadingHistory &&
+          messages.map((message, index) => (
+            <article
+              className={`chat-message chat-message-${message.role}`}
+              key={message.id || `${message.role}-${index}`} // Use database id when available
+            >
+              <strong>{message.role === "user" ? "You" : "Foodable"}</strong>
+
+              {message.role === "assistant" ? (
+                <ReactMarkdown>{message.content}</ReactMarkdown>
+              ) : (
+                <p>{message.content}</p>
+              )}
+            </article>
+          ))}
 
         {isLoading && (
           <p className="loading-message">Foodable is thinking...</p>
@@ -144,10 +220,21 @@ function AIChat() {
             onChange={(event) => setInput(event.target.value)}
             placeholder="Create a healthy sandwich recipe..."
             maxLength={2000}
-            disabled={isLoading}
+
+            // Disable input while history is loading
+            disabled={isLoading || isLoadingHistory}
           />
 
-          <button type="submit" disabled={isLoading || !input.trim()}>
+          <button
+            type="submit"
+
+            // Prevent sending messages until history has loaded
+            disabled={
+              isLoading ||
+              isLoadingHistory ||
+              !input.trim()
+            }
+          >
             {isLoading ? "Thinking..." : "Send"}
           </button>
         </div>

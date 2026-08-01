@@ -1,0 +1,82 @@
+/* Dark overlay behind the modal */
+.ai-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 40px 20px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+/* Main modal container */
+.ai-creation-modal {
+  background: #ffffff;
+  width: 800px;
+  max-width: 95%;
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  border-radius: 12px;
+  padding: 24px;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Header */
+.ai-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 20px;
+}
+
+.ai-modal-header h2 {
+  margin: 0;
+}
+
+/* Form */
+.ai-creation-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ai-creation-modal textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+
+  padding: 12px;
+  font-size: 1rem;
+}
+
+.ai-creation-modal button {
+  cursor: pointer;
+}
+
+/* Generated AI response */
+.ai-creation-result {
+  margin-top: 24px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+
+/* Save / Try Again buttons */
+.ai-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Error message */
+.error-message {
+  color: #c62828;
+  margin-top: 10px;
+}
