@@ -4,17 +4,32 @@ import FeedItem from "../components/FeedItem.jsx";
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
 
 function toPostFeedItem(post) {
-  const isGrocery = post.post_type !== 1;
+  console.log(post);
+  const postUsername = post.profiles.username;
+  const postLikes = post.likes;
+  let postKind = "";
+  let postTitle = "";
+  let postCreated = post.created_date;
+
+  // If post is a 'recipe'
+  if (post.recipe) {
+    postTitle = post.recipe.title;
+    postKind = "recipe";
+
+    // Otherwise, if post is a 'grocery'
+  } else if (post.grocery) {
+    postTitle = post.grocery.title;
+    postKind = "grocery";
+  }
 
   return {
-    ...post,
-
     key: `post-${post.post_id}`,
-    id: post.post_id,
-
-    kind: isGrocery ? "grocery-post" : "recipe",
-
-    author: post.profiles?.username ?? "Unknown",
+    username: postUsername,
+    likes: postLikes,
+    kind: postKind,
+    created: postCreated,
+    title: postTitle,
+    original: post,
   };
 }
 
@@ -49,12 +64,15 @@ export default function SocialFeed() {
     loadCommunity();
   }, []);
 
+  // React optimization - useMemo, for each post that comes from 'toPostFeedItem', add to posts
+  // Returns: feedItems (array);
   const feedItems = useMemo(() => {
     return posts.map(toPostFeedItem);
   }, [posts]);
 
   function loadSelectedContent() {
     if (!selectedItem) {
+      // If there is no social post alreadt loaded, show this.
       return (
         <div className="placeholder-social-post">
           <h3>Select a post</h3>
@@ -63,17 +81,15 @@ export default function SocialFeed() {
         </div>
       );
     }
-
+    // Display content from 'FeedItem'. 'FeedItem' will accurately display the proper content formatted.
     return <FeedItem incoming_data={selectedItem} />;
   }
 
   return (
     <section className="content-container">
       <section id="post-list">
-        <h2>Community</h2>
-
+        <h2>Feed</h2>
         {loading && <p className="community-message">Loading posts...</p>}
-
         {actionError && (
           <p className="community-message community-message--error">
             {actionError}
@@ -86,14 +102,15 @@ export default function SocialFeed() {
               <div key={item.key}>
                 <button
                   className="social-button-posts"
-                  onClick={() => setSelectedItem(item)}
+                  onClick={() => setSelectedItem(item.original)}
                 >
-                  <h4>{item.title}</h4>
-
-                  <p className="post-author-render">
-                    <i>By {item.author}</i>
-                  </p>
-
+                  <h3>{item.title}</h3>
+                  <section className="post-info">
+                    <p className="post-author-render">
+                      <i>By {item.username}</i>
+                    </p>
+                    <p className="post-date-render">{item.created}</p>
+                  </section>
                   <div className="pill-container">
                     <p className="pill-render likes-render">♥ {item.likes}</p>
 
