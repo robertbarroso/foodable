@@ -102,10 +102,28 @@ a.active#nav-bar-design {
   color: rgb(234, 253, 241);
 }
 
+.pill-render-post {
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  width: auto;
+  max-width: 80px;
+  border-radius: 30px;
+  font-weight: 700;
+  color: rgb(234, 253, 241);
+  margin-top: 10px;
+  margin-right: 5px;
+}
+
 .pill-container {
-  display: flex;
+  display: inline-flex;
   font-size: 0.8rem;
   gap: 10px;
+  align-items: center;
+
+  justify-content: center;
 }
 
 .likes-render {
@@ -442,4 +460,20 @@ a.active#nav-bar-design {
   .chat-input-row button {
     padding-inline: 1rem;
   }
+}
+
+/* Recipe Social Post */
+
+#post-title {
+  font-size: 40px;
+  margin-bottom: 4px;
+}
+
+.post-information-full {
+  flex: auto;
+  display: flex;
+}
+
+.post-information-content {
+  margin-right: 40px;
 }
