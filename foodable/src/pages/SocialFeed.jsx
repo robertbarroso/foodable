@@ -9,7 +9,11 @@ function toPostFeedItem(post) {
   const postLikes = post.likes;
   let postKind = "";
   let postTitle = "";
-  let postCreated = post.created_date;
+  const postCreated = new Date(post.created_date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 
   // If post is a 'recipe'
   if (post.recipe) {
@@ -88,7 +92,7 @@ export default function SocialFeed() {
   return (
     <section className="content-container">
       <section id="post-list">
-        <h2>Feed</h2>
+        <h3>Feed</h3>
         {loading && <p className="community-message">Loading posts...</p>}
         {actionError && (
           <p className="community-message community-message--error">
@@ -104,11 +108,9 @@ export default function SocialFeed() {
                   className="social-button-posts"
                   onClick={() => setSelectedItem(item.original)}
                 >
-                  <h3>{item.title}</h3>
+                  <h3 className="post-title-render">{item.title}</h3>
                   <section className="post-info">
-                    <p className="post-author-render">
-                      <i>By {item.username}</i>
-                    </p>
+                    <p className="post-author-render">By {item.username}</p>
                     <p className="post-date-render">{item.created}</p>
                   </section>
                   <div className="pill-container">
@@ -118,6 +120,7 @@ export default function SocialFeed() {
                       {item.kind === "recipe" ? "Recipe" : "Grocery"}
                     </p>
                   </div>
+                  <div className="post-divider"></div>
                 </button>
               </div>
             );

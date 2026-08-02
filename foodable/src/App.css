@@ -93,18 +93,17 @@ a.active#nav-bar-design {
   text-align: center;
   padding-left: 10px;
   padding-right: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 7px;
+  padding-bottom: 7px;
   width: auto;
   max-width: 80px;
   border-radius: 30px;
   font-weight: 700;
-  color: white;
+  color: rgb(234, 253, 241);
 }
 
 .pill-container {
   display: flex;
-  padding: 0.25rem 0.75rem;
   font-size: 0.8rem;
   gap: 10px;
 }
@@ -114,7 +113,7 @@ a.active#nav-bar-design {
 }
 
 .tag-render {
-  background-color: rgb(87, 87, 225);
+  background-color: rgb(131, 154, 144);
 }
 
 .likes-render:hover {
@@ -123,10 +122,36 @@ a.active#nav-bar-design {
   transform: scale(1.05);
 }
 
+.post-info {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.25rem;
+  justify-content: space-between;
+}
 .community-heart-pill {
   border: none;
   color: inherit;
   font: inherit;
+}
+
+.post-title-render {
+  font-size: 20px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  color: #576662;
+}
+
+.post-author-render {
+  margin-right: 10px;
+}
+
+.post-divider {
+  height: 1.5px;
+  background-color: rgb(231, 231, 231);
+  border-radius: 10px;
 }
 
 .community-heart-button {
