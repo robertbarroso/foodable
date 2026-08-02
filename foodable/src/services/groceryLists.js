@@ -1,10 +1,25 @@
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
+const TOKEN_STORAGE_KEY = "foodable_access_token";
+
+function getAccessToken() {
+  try {
+    return localStorage.getItem(TOKEN_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function authHeaders() {
+  const token = getAccessToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 async function apiRequest(path, options = {}) {
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...authHeaders(),
       ...options.headers,
     },
   });

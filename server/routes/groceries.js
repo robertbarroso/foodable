@@ -1,6 +1,6 @@
 import express from "express";
 import supabase from "../supabase.js";
-import fakeAuth from "../utils/fakeAuth.js";
+import requireAuthOrFake from "../utils/requireAuthOrFake.js";
 import {
   copyPublicListForUser,
   findPublicList,
@@ -9,8 +9,6 @@ import {
 } from "../utils/groceryPublic.js";
 
 const groceriesRouter = express.Router();
-
-groceriesRouter.use(fakeAuth);
 
 function normalizeNullableText(value) {
   if (value == null || value === "") return null;
@@ -100,7 +98,7 @@ groceriesRouter.get("/public/:listId", async (req, res) => {
   return res.json(data);
 });
 
-groceriesRouter.post("/public/:listId/copy", async (req, res) => {
+groceriesRouter.post("/public/:listId/copy", requireAuthOrFake, async (req, res) => {
   const result = await copyPublicListForUser(req.params.listId, req.user.id);
 
   if (result.error) {
@@ -110,7 +108,7 @@ groceriesRouter.post("/public/:listId/copy", async (req, res) => {
   return res.status(result.status).json(result.data);
 });
 
-groceriesRouter.get("/", async (req, res) => {
+groceriesRouter.get("/", requireAuthOrFake, async (req, res) => {
   const { data, error } = await supabase
     .from("grocery_lists")
     .select(
@@ -134,7 +132,7 @@ groceriesRouter.get("/", async (req, res) => {
   return res.json(data);
 });
 
-groceriesRouter.get("/:listId", async (req, res) => {
+groceriesRouter.get("/:listId", requireAuthOrFake, async (req, res) => {
   const { data, error } = await supabase
     .from("grocery_lists")
     .select(
@@ -172,7 +170,7 @@ groceriesRouter.get("/:listId", async (req, res) => {
   return res.json(data);
 });
 
-groceriesRouter.post("/", async (req, res) => {
+groceriesRouter.post("/", requireAuthOrFake, async (req, res) => {
   const title = typeof req.body.title === "string" ? req.body.title.trim() : "";
   const budgetEstimate = normalizeNullablePrice(req.body.budget_estimate);
   const isPublic = req.body.is_public ?? false;
@@ -219,7 +217,7 @@ groceriesRouter.post("/", async (req, res) => {
   return res.status(201).json(data);
 });
 
-groceriesRouter.patch("/:listId", async (req, res) => {
+groceriesRouter.patch("/:listId", requireAuthOrFake, async (req, res) => {
   const updates = {};
 
   if ("title" in req.body) {
@@ -288,7 +286,7 @@ groceriesRouter.patch("/:listId", async (req, res) => {
   return res.json(data);
 });
 
-groceriesRouter.delete("/:listId", async (req, res) => {
+groceriesRouter.delete("/:listId", requireAuthOrFake, async (req, res) => {
   const { data, error } = await supabase
     .from("grocery_lists")
     .delete()
@@ -308,7 +306,7 @@ groceriesRouter.delete("/:listId", async (req, res) => {
   return res.json(data);
 });
 
-groceriesRouter.post("/:listId/items", async (req, res) => {
+groceriesRouter.post("/:listId/items", requireAuthOrFake, async (req, res) => {
   if (!(await requireOwnedList(req, res))) return;
 
   const name = typeof req.body.name === "string" ? req.body.name.trim() : "";
@@ -345,7 +343,7 @@ groceriesRouter.post("/:listId/items", async (req, res) => {
   return res.status(201).json(data);
 });
 
-groceriesRouter.patch("/:listId/items/:itemId", async (req, res) => {
+groceriesRouter.patch("/:listId/items/:itemId", requireAuthOrFake, async (req, res) => {
   if (!(await requireOwnedList(req, res))) return;
 
   const updates = {};
@@ -410,7 +408,7 @@ groceriesRouter.patch("/:listId/items/:itemId", async (req, res) => {
   return res.json(data);
 });
 
-groceriesRouter.delete("/:listId/items/:itemId", async (req, res) => {
+groceriesRouter.delete("/:listId/items/:itemId", requireAuthOrFake, async (req, res) => {
   if (!(await requireOwnedList(req, res))) return;
 
   const { data, error } = await supabase
