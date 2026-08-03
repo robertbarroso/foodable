@@ -14,6 +14,7 @@ export default function RecipePost({ recipe_post }) {
       year: "numeric",
     },
   );
+
   return (
     <>
       <article recipe-post-header>
@@ -29,7 +30,55 @@ export default function RecipePost({ recipe_post }) {
             Posted on <b>{recipeCreated}</b>
           </p>
         </section>
-        <section id="recipe-macros"></section>
+        <section id="recipe-macros">
+          <div className="recipe-macro-container">
+            <div className="recipe-macro-title">Calories</div>
+            <div className="recipe-macro-value">
+              {recipe_post.recipe.calories}
+            </div>
+          </div>
+          <div className="recipe-macro-container">
+            <div className="recipe-macro-title">Protein</div>
+            <div className="recipe-macro-value">
+              {recipe_post.recipe.protein}g
+            </div>
+          </div>
+          <div className="recipe-macro-container">
+            <div className="recipe-macro-title">Carbs</div>
+            <div className="recipe-macro-value">
+              {recipe_post.recipe.carbs}g
+            </div>
+          </div>
+          <div className="recipe-macro-container">
+            <div className="recipe-macro-title">Fat</div>
+            <div className="recipe-macro-value">{recipe_post.recipe.fat}g</div>
+          </div>
+        </section>
+        <section id="recipe-instructions-container">
+          <h2 className="post-sub-title">Ingredients</h2>
+          <div className="ingredient-main-container">
+            {recipe_post.recipe.ingredients.map((ingredient, index) => (
+              <div key={index} className="ingredient-container">
+                <div className="ingredient-title">
+                  <p className="ingredient-text-title">• {ingredient.name} </p>
+                </div>
+                <div className="ingredient-info">
+                  <p className="ingredient-design">{ingredient.quantity}</p>
+                  <p className="ingredient-design">
+                    ${ingredient.cost.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <div className="recipe-total-cost-container">
+              <div className="ingredient-text-title">Total Cost</div>
+
+              <div className="recipe-total-cost-value">
+                ${recipe_post.recipe.ingredient_cost.toFixed(2)}
+              </div>
+            </div>
+          </div>
+        </section>
       </article>
     </>
   );
