@@ -14,7 +14,7 @@ export default function GroceryPost({ grocery_post }) {
   );
   return (
     <>
-      <article grocery-post-header>
+      <article className="grocery-post-header">
         <h3 id="post-title">{grocery_post.grocery.title}</h3>
         <div className="post-information-full">
           <p className="pill-render-post likes-render post-information-content">
@@ -24,9 +24,28 @@ export default function GroceryPost({ grocery_post }) {
             Created by <b>{grocery_post.profiles.username}</b>
           </p>
           <p className="post-information-content">
-            Posted on: <b>{groceryCreated}</b>
+            Posted on <b>{groceryCreated}</b>
           </p>
         </div>
+        <section className="grocery-content-container">
+          <div className="grocery-list-render">
+            {grocery_post.grocery.items.map((item, index) => (
+              <div className="grocery-card">
+                <div className="grocery-index label-counter"> {index + 1} </div>
+                <div className="grocery-content label-text-title">
+                  {item.name}
+                </div>
+                <div className="grocery-quantity info-design">
+                  {item.quantity}
+                </div>
+                <div className="grocery-price info-design">
+                  ${item.price.toFixed(2)}
+                </div>
+                <div className="info-design">{item.category}</div>
+              </div>
+            ))}
+          </div>
+        </section>
       </article>
     </>
   );

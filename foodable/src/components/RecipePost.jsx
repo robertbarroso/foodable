@@ -60,7 +60,7 @@ export default function RecipePost({ recipe_post }) {
             <div className="recipe-instructions-render">
               {recipe_post.recipe.instructions.map((instruction, index) => (
                 <div className="instruction-card">
-                  <div className="instruction-counter">{index + 1}</div>
+                  <div className="label-counter">{index + 1}</div>
                   <div className="instruction-content">{instruction}</div>
                 </div>
               ))}
@@ -72,15 +72,11 @@ export default function RecipePost({ recipe_post }) {
               {recipe_post.recipe.ingredients.map((ingredient, index) => (
                 <div key={index} className="ingredient-container">
                   <div className="ingredient-title">
-                    <p className="ingredient-text-title">
-                      • {ingredient.name}{" "}
-                    </p>
+                    <p className="label-text-title">• {ingredient.name} </p>
                   </div>
                   <div className="ingredient-info">
-                    <p className="ingredient-design">{ingredient.quantity}</p>
-                    <p className="ingredient-design">
-                      ${ingredient.cost.toFixed(2)}
-                    </p>
+                    <p className="info-design">{ingredient.quantity}</p>
+                    <p className="info-design">${ingredient.cost.toFixed(2)}</p>
                   </div>
                 </div>
               ))}

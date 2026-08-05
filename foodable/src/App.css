@@ -497,6 +497,11 @@ a.active#nav-bar-design {
   align-items: center;
   border: 2px solid #56716a;
 }
+
+.recipe-macro-container:hover {
+  background: rgb(146, 156, 150);
+  cursor: pointer;
+}
 .recipe-macro-title {
   font-size: 20px;
   font-weight: 600;
@@ -549,10 +554,9 @@ a.active#nav-bar-design {
   border: 1px solid rgb(106, 110, 106);
 }
 
-.ingredient-text-title {
+.label-text-title {
   font-size: 17px;
   font-weight: bold;
-  color: #525e5b;
   padding-right: 10px;
 }
 
@@ -566,7 +570,7 @@ a.active#nav-bar-design {
   color: #2e2e2e;
   margin-left: 10px;
 }
-.ingredient-design {
+.info-design {
   font-family: "Courier New", Courier, monospace;
   font-weight: bolder;
   background-color: #bcd1cc;
@@ -578,6 +582,11 @@ a.active#nav-bar-design {
   border: 2px solid rgb(140, 149, 142);
   border-radius: 30px;
   color: #323332;
+}
+
+.info-design:hover {
+  background-color: #d1ddda;
+  cursor: pointer;
 }
 
 .recipe-total-cost-container {
@@ -594,14 +603,15 @@ a.active#nav-bar-design {
   padding: 5px;
 }
 
-.instruction-counter {
+.label-counter {
   font-size: 25px;
   font-weight: bolder;
   color: #66746c;
   padding-right: 10px;
 }
 
-.instruction-card {
+.instruction-card,
+.grocery-card {
   border-bottom: 4px dotted #aeb7b2;
   margin: 30px;
   padding-bottom: 20px;
@@ -609,7 +619,16 @@ a.active#nav-bar-design {
   align-items: center;
 }
 
+.grocery-list-render {
+  width: 35rem;
+}
+
 .instruction-content {
   font-weight: 600;
   font-size: 16px;
+}
+
+.grocery-content {
+  flex: 1;
+  background-color: transparent;
 }
