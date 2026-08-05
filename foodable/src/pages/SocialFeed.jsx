@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import FeedItem from "../components/FeedItem.jsx";
 
+import { selectUser } from "../auth/UserContext.jsx";
+
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
 
 function toPostFeedItem(post) {
@@ -43,6 +45,8 @@ export default function SocialFeed() {
   const [loading, setLoading] = useState(true);
   const [actionError, setActionError] = useState(null);
 
+  const { currentUser } = selectUser();
+
   useEffect(() => {
     async function loadCommunity() {
       try {
@@ -66,7 +70,7 @@ export default function SocialFeed() {
     }
 
     loadCommunity();
-  }, []);
+  }, [currentUser]);
 
   // React optimization - useMemo, for each post that comes from 'toPostFeedItem', add to posts
   // Returns: feedItems (array);
@@ -89,6 +93,23 @@ export default function SocialFeed() {
     return <FeedItem incoming_data={selectedItem} />;
   }
 
+  async function handleLike(post_id) {
+    const response = await fetch(`${API_URL}/social-posts/${post_id}/like`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        user_id: currentUser.id,
+      }),
+    });
+
+    const data = await response.json();
+
+    console.log(data);
+  }
+
   return (
     <section className="content-container">
       <section id="post-list">
@@ -104,7 +125,7 @@ export default function SocialFeed() {
           feedItems.map((item) => {
             return (
               <div key={item.key}>
-                <button
+                <div
                   className="social-button-posts"
                   onClick={() => setSelectedItem(item.original)}
                 >
@@ -114,14 +135,22 @@ export default function SocialFeed() {
                     <p className="post-date-render">{item.created}</p>
                   </section>
                   <div className="pill-container">
-                    <p className="pill-render likes-render">♥ {item.likes}</p>
+                    <button
+                      className="pill-render likes-render"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleLike(item.original.post_id);
+                      }}
+                    >
+                      ♥ {item.likes}
+                    </button>
 
                     <p className="pill-render tag-render">
                       {item.kind === "recipe" ? "Recipe" : "Grocery"}
                     </p>
                   </div>
                   <div className="post-divider"></div>
-                </button>
+                </div>
               </div>
             );
           })}

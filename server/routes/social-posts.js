@@ -59,8 +59,36 @@ router.get("/", async (req, res) => {
 
 // Heart a post. For grocery posts, first heart also copies the list to the user.
 
-// RECIPES: When 'is_public' is set to true
+router.post("/:post_id/like", async (req, res) => {
+  const post_id = req.params.post_id;
 
-// GROCERIES: When 'is_public' is set to true
+  const { user_id } = req.body;
+
+  try {
+    const { error } = await supabase.from("post_likes").insert({
+      user_id,
+      post_id,
+    });
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        error: error.message,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      user_id,
+      post_id,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+    });
+  }
+});
 
 export default router;

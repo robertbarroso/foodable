@@ -4,8 +4,6 @@ export default function RecipePost({ recipe_post }) {
     return <p>No recipe post received.</p>;
   }
 
-  console.log(recipe_post);
-
   const recipeCreated = new Date(recipe_post.created_date).toLocaleDateString(
     "en-US",
     {
