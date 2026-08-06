@@ -51,6 +51,7 @@ export default function SocialFeed() {
     async function loadCommunity() {
       try {
         setLoading(true);
+        setActionError(null);
 
         const response = await fetch(`${API_URL}/social-posts`);
 
@@ -70,7 +71,7 @@ export default function SocialFeed() {
     }
 
     loadCommunity();
-  }, [currentUser]);
+  }, []);
 
   // React optimization - useMemo, for each post that comes from 'toPostFeedItem', add to posts
   // Returns: feedItems (array);
@@ -94,6 +95,11 @@ export default function SocialFeed() {
   }
 
   async function handleLike(post_id) {
+    if (!currentUser?.id) {
+      setActionError("Please sign in to like posts.");
+      return;
+    }
+
     const response = await fetch(`${API_URL}/social-posts/${post_id}/like`, {
       method: "POST",
       headers: {

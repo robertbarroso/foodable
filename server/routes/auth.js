@@ -1,5 +1,7 @@
 import express from "express";
-import supabase from "../supabase.js";
+
+// createSupabaseAuthClient creates a new client (separate from the stable one).
+import { createSupabaseAuthClient, supabaseService } from "../supabase.js";
 
 const authRouter = express.Router();
 
@@ -9,9 +11,10 @@ authRouter.post("/signup", async (req, res) => {
     req.body;
 
   try {
+    const supabaseAuth = createSupabaseAuthClient();
+
     // This will create a user within Supabase
-    // This is NOT in the 'profiles' tab - yet.
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabaseAuth.auth.signUp({
       email,
       password: passwordSignUp,
     });
@@ -25,13 +28,15 @@ authRouter.post("/signup", async (req, res) => {
     }
 
     // Add the above to the profiles tab
-    const { error: profileError } = await supabase.from("profiles").insert({
-      id: data.user.id,
-      first_name: firstName,
-      last_name: lastName,
-      username: usernameSignUp,
-      email: email,
-    });
+    const { error: profileError } = await supabaseService
+      .from("profiles")
+      .insert({
+        id: data.user.id,
+        first_name: firstName,
+        last_name: lastName,
+        username: usernameSignUp,
+        email: email,
+      });
 
     console.log("PROFILE ERROR:", profileError);
 
@@ -64,7 +69,9 @@ authRouter.post("/signin", async (req, res) => {
     console.log(email);
     console.log(passwordSignIn);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const supabaseAuth = createSupabaseAuthClient();
+
+    const { data, error } = await supabaseAuth.auth.signInWithPassword({
       email,
       password: passwordSignIn,
     });
@@ -76,7 +83,7 @@ authRouter.post("/signin", async (req, res) => {
       });
     }
 
-    const { data: profileData, error: profileError } = await supabase
+    const { data: profileData, error: profileError } = await supabaseService
       .from("profiles")
       .select("*")
       .eq("id", data.user.id)
@@ -95,6 +102,11 @@ authRouter.post("/signin", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
 

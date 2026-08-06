@@ -7,6 +7,9 @@ import RecipePost from "./RecipePost";
 
 export default function FeedItem({ incoming_data }) {
   // Error handling: If empty
+  console.log("INCOMING_DATA:");
+
+  console.log(incoming_data);
   if (!incoming_data) {
     // Console report
     console.error(
@@ -15,19 +18,25 @@ export default function FeedItem({ incoming_data }) {
     );
 
     // Visual return
-    return (
-      <div id="error-return">
-        <p>ERROR: Unable to load incoming content</p>
-      </div>
-    );
   }
 
   // If incoming is -> Recipe
-  if (incoming_data.recipe_list_id) {
+  if (incoming_data.recipe) {
     return <RecipePost recipe_post={incoming_data} />;
   }
   // If incoming is -> Grocery List
-  if (incoming_data.grocery_list_id) {
+  if (incoming_data.grocery) {
     return <GroceryPost grocery_post={incoming_data} />;
   }
+
+  // If the shape is unrecognized, log and show a placeholder
+  console.error(
+    "ERROR: Unrecognized post shape for incoming_data",
+    incoming_data,
+  );
+  return (
+    <div id="error-return">
+      <p>ERROR: Unable to render this post type.</p>
+    </div>
+  );
 }
