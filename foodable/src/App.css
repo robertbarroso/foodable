@@ -65,7 +65,7 @@ a.active#nav-bar-design {
   margin: 20px;
   padding: 20px;
   padding-left: 70px;
-  padding-top: 80px;
+  padding-top: 50px;
   width: 80vw;
   height: 600px;
   color: #57534e;
@@ -93,20 +93,37 @@ a.active#nav-bar-design {
   text-align: center;
   padding-left: 10px;
   padding-right: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 7px;
+  padding-bottom: 7px;
   width: auto;
   max-width: 80px;
   border-radius: 30px;
   font-weight: 700;
-  color: white;
+  color: rgb(234, 253, 241);
+}
+
+.pill-render-post {
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  width: auto;
+  max-width: 80px;
+  border-radius: 30px;
+  font-weight: 700;
+  color: rgb(234, 253, 241);
+  margin-top: 10px;
+  margin-right: 5px;
 }
 
 .pill-container {
-  display: flex;
-  padding: 0.25rem 0.75rem;
+  display: inline-flex;
   font-size: 0.8rem;
   gap: 10px;
+  align-items: center;
+
+  justify-content: center;
 }
 
 .likes-render {
@@ -114,7 +131,7 @@ a.active#nav-bar-design {
 }
 
 .tag-render {
-  background-color: rgb(87, 87, 225);
+  background-color: rgb(131, 154, 144);
 }
 
 .likes-render:hover {
@@ -123,10 +140,36 @@ a.active#nav-bar-design {
   transform: scale(1.05);
 }
 
+.post-info {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.25rem;
+  justify-content: space-between;
+}
 .community-heart-pill {
   border: none;
   color: inherit;
   font: inherit;
+}
+
+.post-title-render {
+  font-size: 20px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  color: #576662;
+}
+
+.post-author-render {
+  margin-right: 10px;
+}
+
+.post-divider {
+  height: 1.5px;
+  background-color: rgb(231, 231, 231);
+  border-radius: 10px;
 }
 
 .community-heart-button {
@@ -417,4 +460,175 @@ a.active#nav-bar-design {
   .chat-input-row button {
     padding-inline: 1rem;
   }
+}
+
+/* Recipe Social Post */
+
+#post-title {
+  font-size: 55px;
+  margin-bottom: 4px;
+}
+
+.post-information-full {
+  flex: auto;
+  display: flex;
+}
+
+.post-information-content {
+  margin-right: 40px;
+}
+
+#recipe-macros {
+  width: 85%;
+
+  border-radius: 12px;
+  box-sizing: border-box;
+  color: #b7c0bb;
+  display: flex;
+}
+
+.recipe-macro-container {
+  background: rgb(126, 139, 131);
+  padding: 1.3rem;
+  border-radius: 35px;
+  margin: 20px;
+  padding-right: 30px;
+  display: flex;
+  align-items: center;
+  border: 2px solid #56716a;
+}
+
+.recipe-macro-container:hover {
+  background: rgb(146, 156, 150);
+  cursor: pointer;
+}
+.recipe-macro-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.recipe-macro-value {
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bolder;
+  color: #effffb;
+  font-size: 28px;
+  padding-left: 20px;
+}
+
+#recipe-content-container {
+  border-radius: 35px;
+  padding-right: 10px;
+  display: flex;
+  margin-right: 40px;
+}
+
+#recipe-main-instructions {
+  flex: 1.3;
+}
+
+#recipe-main-ingredients {
+  flex: 1;
+}
+
+.post-sub-title {
+  font-size: 25px;
+  margin-bottom: 4px;
+  font-weight: bold;
+  color: #4a4a4a;
+}
+
+.ingredient-container {
+  display: flex;
+  align-items: center;
+  border-bottom: 4px dotted #aeb7b2;
+  margin: 10px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ingredient-main-container {
+  background-color: #eaf0ec;
+  border-radius: 20px;
+  padding: 20px;
+  padding-top: 30px;
+  border: 1px solid rgb(106, 110, 106);
+}
+
+.label-text-title {
+  font-size: 17px;
+  font-weight: bold;
+  padding-right: 10px;
+}
+
+.ingredient-info {
+  display: flex;
+}
+.recipe-total-cost-value {
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bolder;
+  font-size: 25px;
+  color: #2e2e2e;
+  margin-left: 10px;
+}
+.info-design {
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bolder;
+  background-color: #bcd1cc;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-left: 10px;
+  border: 2px solid rgb(140, 149, 142);
+  border-radius: 30px;
+  color: #323332;
+}
+
+.info-design:hover {
+  background-color: #d1ddda;
+  cursor: pointer;
+}
+
+.recipe-total-cost-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  padding-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.recipe-instructions-render {
+  padding: 5px;
+}
+
+.label-counter {
+  font-size: 25px;
+  font-weight: bolder;
+  color: #66746c;
+  padding-right: 10px;
+}
+
+.instruction-card,
+.grocery-card {
+  border-bottom: 4px dotted #aeb7b2;
+  margin: 30px;
+  padding-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.grocery-list-render {
+  width: 35rem;
+}
+
+.instruction-content {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.grocery-content {
+  flex: 1;
+  background-color: transparent;
 }
