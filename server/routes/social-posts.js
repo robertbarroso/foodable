@@ -2,6 +2,7 @@ import express from "express";
 import { supabaseService } from "../supabase.js";
 import fakeAuth from "../utils/fakeAuth.js";
 //import { selectUser } from "../../foodable/src/auth/UserContext.jsx";
+import requireAuth from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
@@ -69,10 +70,11 @@ router.get("/", async (req, res) => {
 
 // Heart a post. For grocery posts, first heart also copies the list to the user.
 
-router.post("/:post_id/like", async (req, res) => {
+router.post("/:post_id/like", requireAuth, async (req, res) => {
   const post_id = req.params.post_id;
 
-  const { user_id } = req.body;
+  // Comes from requireAuth
+  const user_id = req.user.id;
 
   try {
     const { error } = await supabaseService.from("post_likes").insert({
@@ -81,9 +83,39 @@ router.post("/:post_id/like", async (req, res) => {
     });
 
     if (error) {
+      console.error("ERROR: Failed to save the liked post!");
       return res.status(400).json({
         success: false,
         error: error.message,
+      });
+    }
+
+    // Grab the post
+    const { data: post_row_data, error: post_fetch_error } =
+      await supabaseService
+        .from("posts")
+        .select("likes")
+        .eq("post_id", post_id)
+        .single();
+    // If the fetch failes
+    if (post_fetch_error) {
+      console.error("ERROR: Failed to fetch current post (for likes)");
+      return res.status(400).json({
+        success: false,
+        error: "ERROR: Failed to fetch post likes",
+      });
+    }
+
+    // Update the post
+    const { error: post_error_update_likes } = await supabaseService
+      .from("posts")
+      .update({ likes: (post_row_data.likes ?? 0) + 1 })
+      .eq("post_id", post_id);
+    // If the increment failes
+    if (post_error_update_likes) {
+      return res.status(400).json({
+        success: false,
+        error: "ERROR: Failed to increment the likes by 1",
       });
     }
 
@@ -94,7 +126,6 @@ router.post("/:post_id/like", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-
     return res.status(500).json({
       success: false,
     });

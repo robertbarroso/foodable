@@ -99,6 +99,11 @@ authRouter.post("/signin", async (req, res) => {
     return res.status(200).json({
       success: true,
       profile: profileData,
+      session: {
+        access_token: data.session?.access_token,
+        refresh_token: data.session?.refresh_token,
+        expires_at: data.session?.expires_at,
+      },
     });
   } catch (error) {
     console.error(error);

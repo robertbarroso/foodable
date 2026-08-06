@@ -100,18 +100,50 @@ export default function SocialFeed() {
       return;
     }
 
+    const access_token = localStorage.getItem("supabase_access_token");
+
+    if (!access_token) {
+      console.error("ERROR: Missing token!");
+      setActionError("Missing sign in token!");
+      return;
+    }
+
+    setActionError(null);
+
+    // Update UI to show updated likes
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.post_id === post_id
+          ? { ...post, likes: Number(post.likes ?? 0) + 1 }
+          : post,
+      ),
+    );
+
     const response = await fetch(`${API_URL}/social-posts/${post_id}/like`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`,
       },
-
-      body: JSON.stringify({
-        user_id: currentUser.id,
-      }),
+      body: JSON.stringify({}),
     });
 
     const data = await response.json();
+
+    if (!response.ok) {
+      // Roll back optimistic change on failure
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.post_id === post_id
+            ? { ...post, likes: Math.max(Number(post.likes ?? 1) - 1, 0) }
+            : post,
+        ),
+      );
+
+      console.error("ERROR: Failed to like post", data);
+      setActionError(data.error || "Failed to like post");
+      return;
+    }
 
     console.log(data);
   }

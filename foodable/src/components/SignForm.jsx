@@ -109,14 +109,22 @@ function SignUpForm() {
 
       const signinData = await signinResponse.json();
       console.log("signinData");
-      console.log(signinData);
 
       if (signinData.success) {
-        console.log("PROFILE FOUND:", signinData.profile);
+        // Save access token, otherwise null
+        const currentUserAccessToken = signinData.session?.access_token;
 
-        // If success, set the current user from context
-        console.log("SETTING USER:", signinData.profile);
+        // If the token is valid,
+        if (currentUserAccessToken) {
+          // Save in to local storage for persistence.
+          localStorage.setItem("supabase_access_token", currentUserAccessToken);
+        }
+
         setCurrentUser(signinData.profile);
+        localStorage.setItem(
+          "supabase_profile",
+          JSON.stringify(signinData.profile),
+        );
 
         navigate("/");
       }
