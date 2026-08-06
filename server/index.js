@@ -11,7 +11,7 @@ import discoveryRouter from "./routes/discovery.js";
 import chatRouter from "./routes/chat.js";
 
 const app = express();
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(express.json());
