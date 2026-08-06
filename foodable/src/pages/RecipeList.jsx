@@ -4,6 +4,8 @@ import RecipeCard from "../components/RecipeCard";
 import AICreationModal from "../components/AICreationModal";
 import Modal from "../components/Modal";
 
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
+
 export default function Recipe() {
 
   const [recipeList, setRecipeList] = useState([]);
@@ -14,7 +16,7 @@ export default function Recipe() {
   useEffect(() => {
     async function getRecipeFromUser() {
       try {
-        const response = await fetch("http://localhost:5001/api/recipes")
+        const response = await fetch(`${API_URL}/recipes`)
         const data = await response.json()
         
         console.log(data)

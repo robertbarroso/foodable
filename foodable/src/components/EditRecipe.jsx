@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import useRecipeForm from "../hooks/useRecipeForm";
 
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
+
 export default function EditRecipe({recipe, recipeList, setRecipeList, setIsOpen}) {
 
     // Taken from custom hook to compartamentalize add recipe and edit recipe
@@ -49,7 +51,7 @@ export default function EditRecipe({recipe, recipeList, setRecipeList, setIsOpen
                 is_public: isPublic
             }
 
-            const response = await fetch(`http://localhost:5001/api/recipes/${recipe.id}`, {
+            const response = await fetch(`${API_URL}/recipes/${recipe.id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
