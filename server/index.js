@@ -12,7 +12,7 @@ import chatRouter from "./routes/chat.js";
 import testPostRouter from "./routes/test-post.js";
 
 const app = express();
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(express.json());
