@@ -1,18 +1,22 @@
-export async function searchProducts(searchTerm) {
-  console.log("Searching for:", searchTerm);
+const API_BASE_URL = "http://localhost:5001/api";
 
-  return [
-    {
-      id: 1,
-      name: "Downtown Farmers Market",
-      address: "123 Main Street",
-      city: "Oakland, CA",
-    },
-    {
-      id: 2,
-      name: "West Oakland Produce",
-      address: "456 Market Street",
-      city: "Oakland, CA",
-    },
-  ];
+export async function searchProducts(zip, radius = 10) {
+  const params = new URLSearchParams({
+    zip,
+    radius: String(radius),
+  });
+
+  const response = await fetch(
+    `${API_BASE_URL}/discovery?${params.toString()}`
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error?.message || "Unable to retrieve nearby food locations."
+    );
+  }
+
+  return data;
 }

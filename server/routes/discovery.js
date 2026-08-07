@@ -2,30 +2,13 @@ import express from "express";
 
 const router = express.Router();
 
-const validDirectories = [
-  "agritourism",
-  "csa",
-  "farmersmarket",
-  "foodhub",
-  "onfarmmarket",
-];
-
 router.get("/", async (req, res) => {
   try {
-    const directory = String(
-      req.query.directory || "farmersmarket"
-    ).toLowerCase();
-
     const zip = req.query.zip ? String(req.query.zip).trim() : "";
-    const city = req.query.city ? String(req.query.city).trim() : "";
-    const state = req.query.state
-      ? String(req.query.state).trim().toUpperCase()
-      : "";
+    const radiusMiles = Number(req.query.radius || 10);
 
-    const radius = Number(req.query.radius || 30);
-
-    if (!process.env.USDA_LOCAL_FOOD_API_KEY) {
-      console.error("USDA_LOCAL_FOOD_API_KEY is not configured.");
+    if (!process.env.GEOAPIFY_API_KEY) {
+      console.error("GEOAPIFY_API_KEY is not configured.");
 
       return res.status(500).json({
         error: {
@@ -35,89 +18,151 @@ router.get("/", async (req, res) => {
       });
     }
 
-    if (!validDirectories.includes(directory)) {
-      return res.status(400).json({
-        error: {
-          code: "INVALID_DIRECTORY",
-          message: "Please select a valid directory type.",
-        },
-      });
-    }
-
-    if (!zip && !(city && state)) {
-      return res.status(400).json({
-        error: {
-          code: "LOCATION_REQUIRED",
-          message: "Please enter a ZIP code or a city and state.",
-        },
-      });
-    }
-
-    if (zip && !/^\d{5}$/.test(zip)) {
+    if (!/^\d{5}$/.test(zip)) {
       return res.status(400).json({
         error: {
           code: "INVALID_ZIP",
-          message: "ZIP code must contain exactly five digits.",
+          message: "Please enter a valid five-digit ZIP code.",
         },
       });
     }
 
-    if (!Number.isInteger(radius) || radius < 1 || radius > 100) {
+    if (
+      !Number.isFinite(radiusMiles) ||
+      radiusMiles < 1 ||
+      radiusMiles > 50
+    ) {
       return res.status(400).json({
         error: {
           code: "INVALID_RADIUS",
-          message: "Radius must be a whole number between 1 and 100 miles.",
+          message: "Radius must be between 1 and 50 miles.",
         },
       });
     }
 
-    if (!zip && !/^[A-Z]{2}$/.test(state)) {
-      return res.status(400).json({
-        error: {
-          code: "INVALID_STATE",
-          message: "State must use a valid two-letter abbreviation.",
-        },
-      });
-    }
-
-    const params = new URLSearchParams({
-      apikey: process.env.USDA_LOCAL_FOOD_API_KEY,
+    const geocodeParams = new URLSearchParams({
+      text: zip,
+      type: "postcode",
+      filter: "countrycode:us",
+      limit: "1",
+      format: "json",
+      apiKey: process.env.GEOAPIFY_API_KEY,
     });
 
-    if (zip) {
-      params.append("zip", zip);
-      params.append("radius", String(radius));
-    } else {
-      params.append("city", city);
-      params.append("state", state);
-    }
+    const geocodeUrl =
+      `https://api.geoapify.com/v1/geocode/search?` +
+      geocodeParams.toString();
 
-    const url =
-      `https://www.usdalocalfoodportal.com/api/${directory}/?` +
-      params.toString();
+    const geocodeResponse = await fetch(geocodeUrl);
 
-    const response = await fetch(url);
+    if (!geocodeResponse.ok) {
+      const responseText = await geocodeResponse.text();
 
-    if (!response.ok) {
-      const responseText = await response.text();
-
-      console.error("USDA API request failed:", {
-        status: response.status,
+      console.error("Geoapify geocoding request failed:", {
+        status: geocodeResponse.status,
         response: responseText,
       });
 
       return res.status(502).json({
         error: {
-          code: "USDA_REQUEST_FAILED",
-          message:
-            "Local food locations could not be retrieved. Please try again.",
+          code: "GEOCODING_REQUEST_FAILED",
+          message: "The ZIP code could not be located. Please try again.",
         },
       });
     }
 
-    const data = await response.json();
+    const geocodeData = await geocodeResponse.json();
+    const location = geocodeData.results?.[0];
 
-    return res.status(200).json(data);
+    if (!location) {
+      return res.status(404).json({
+        error: {
+          code: "LOCATION_NOT_FOUND",
+          message: "No location was found for that ZIP code.",
+        },
+      });
+    }
+
+    const { lat, lon } = location;
+
+    const radiusMeters = Math.round(radiusMiles * 1609.344);
+
+    const categories = [
+      "commercial.supermarket",
+      "commercial.food_and_drink.health_food",
+      "commercial.food_and_drink.organic",
+      "commercial.food_and_drink.fruit_and_vegetable",
+    ].join(",");
+
+    const placesParams = new URLSearchParams({
+      categories,
+      filter: `circle:${lon},${lat},${radiusMeters}`,
+      bias: `proximity:${lon},${lat}`,
+      limit: "20",
+      lang: "en",
+      apiKey: process.env.GEOAPIFY_API_KEY,
+    });
+
+    const placesUrl =
+      `https://api.geoapify.com/v2/places?` +
+      placesParams.toString();
+
+    const placesResponse = await fetch(placesUrl);
+
+    if (!placesResponse.ok) {
+      const responseText = await placesResponse.text();
+
+      console.error("Geoapify Places request failed:", {
+        status: placesResponse.status,
+        response: responseText,
+      });
+
+      return res.status(502).json({
+        error: {
+          code: "PLACES_REQUEST_FAILED",
+          message: "Nearby food locations could not be retrieved.",
+        },
+      });
+    }
+
+    const placesData = await placesResponse.json();
+
+    const places = (placesData.features || [])
+      .map((feature) => {
+        const properties = feature.properties || {};
+
+        return {
+          id: properties.place_id,
+          name: properties.name || properties.address_line1 || "Food retailer",
+          address: properties.formatted || "",
+          addressLine1: properties.address_line1 || "",
+          addressLine2: properties.address_line2 || "",
+          city: properties.city || "",
+          state: properties.state_code || properties.state || "",
+          zip: properties.postcode || "",
+          latitude: properties.lat,
+          longitude: properties.lon,
+          distanceMeters: properties.distance ?? null,
+          distanceMiles:
+            typeof properties.distance === "number"
+              ? Number((properties.distance / 1609.344).toFixed(1))
+              : null,
+          categories: properties.categories || [],
+        };
+      })
+      .filter((place) => place.id);
+
+    return res.status(200).json({
+      location: {
+        zip,
+        city: location.city || "",
+        state: location.state_code || location.state || "",
+        latitude: lat,
+        longitude: lon,
+      },
+      count: places.length,
+      places,
+    });
   } catch (error) {
     console.error("Discovery route error:", error);
 
