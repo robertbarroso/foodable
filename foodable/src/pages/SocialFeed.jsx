@@ -46,30 +46,28 @@ export default function SocialFeed() {
   const [actionError, setActionError] = useState(null);
 
   const { currentUser } = selectUser();
+  async function loadCommunity() {
+    try {
+      setLoading(true);
+      setActionError(null);
 
-  useEffect(() => {
-    async function loadCommunity() {
-      try {
-        setLoading(true);
-        setActionError(null);
+      const response = await fetch(`${API_URL}/social-posts`);
 
-        const response = await fetch(`${API_URL}/social-posts`);
+      const data = await response.json();
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Could not load posts");
-        }
-
-        setPosts(data);
-      } catch (error) {
-        console.error(error);
-        setActionError(error.message);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error(data.error || "Could not load posts");
       }
-    }
 
+      setPosts(data);
+    } catch (error) {
+      console.error(error);
+      setActionError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
     loadCommunity();
   }, []);
 
@@ -129,13 +127,14 @@ export default function SocialFeed() {
     });
 
     const data = await response.json();
+    await loadCommunity();
 
     if (!response.ok) {
-      // Roll back optimistic change on failure
+      // Roll back some of the changes if failed.
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post.post_id === post_id
-            ? { ...post, likes: Math.max(Number(post.likes ?? 1) - 1, 0) }
+            ? { ...post, likes: Math.max(post.likes ?? 1 - 1, 0) }
             : post,
         ),
       );
