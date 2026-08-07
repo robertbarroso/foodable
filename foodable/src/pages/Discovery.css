@@ -1,0 +1,23 @@
+.discovery-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.search-input {
+  width: 250px;
+  padding: 8px;
+  margin-right: 10px;
+}
+
+.search-button {
+  padding: 8px 16px;
+}
+
+.store-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: white;
+}
