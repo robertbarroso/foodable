@@ -74,13 +74,20 @@ export default function Recipe() {
       {!isLoading && !recipeList.length && (
         <h1>No recipes to display...</h1>
       )}
-
+      
       {showAICreation && (
         <AICreationModal
           mode="recipe"
           onClose={() => setShowAICreation(false)}
           onCreated={(recipe) => {
             console.log(recipe);
+
+            // AI RECIPE SAVE INTEGRATION
+            setRecipeList((currentRecipes) => [
+              ...currentRecipes,
+              recipe,
+            ]);
+
             setShowAICreation(false);
           }}
         />
