@@ -1,6 +1,5 @@
 import express from "express";
 import { supabaseService } from "../supabase.js";
-import fakeAuth from "../utils/fakeAuth.js";
 //import { selectUser } from "../../foodable/src/auth/UserContext.jsx";
 import requireAuth from "../middleware/requireAuth.js";
 
@@ -8,10 +7,9 @@ const router = express.Router();
 
 //const currentUser = selectUser();
 
-router.use(fakeAuth);
-
 // GET: All current social posts
 router.get("/", async (req, res) => {
+  console.log("🔥 SOCIAL POSTS GET ROUTE HIT");
   try {
     const { data, error } = await supabaseService
       .from("posts")

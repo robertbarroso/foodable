@@ -73,15 +73,16 @@ a.active#nav-bar-design {
 
 .social-button-posts {
   background-color: white;
-  border: 0px;
+  border: 2px solid transparent;
   width: 19vw;
   text-align: left;
-  padding-left: 18px;
+  padding: 15px;
   border-radius: 12px;
 }
 
 .social-button-posts:hover {
-  background-color: rgb(243, 243, 243);
+  border: 2px solid rgb(196, 211, 200);
+  box-shadow: 0 0 0 3px rgba(202, 228, 208, 0.25);
   cursor: pointer;
 }
 
@@ -170,6 +171,7 @@ a.active#nav-bar-design {
   height: 1.5px;
   background-color: rgb(231, 231, 231);
   border-radius: 10px;
+  margin: 10px;
 }
 
 .community-heart-button {
@@ -515,11 +517,12 @@ a.active#nav-bar-design {
   padding-left: 20px;
 }
 
-#recipe-content-container {
-  border-radius: 35px;
-  padding-right: 10px;
+.content-container {
   display: flex;
-  margin-right: 40px;
+
+  height: 100vh;
+
+  overflow: hidden;
 }
 
 #recipe-main-instructions {
@@ -631,4 +634,36 @@ a.active#nav-bar-design {
 .grocery-content {
   flex: 1;
   background-color: transparent;
+}
+
+#search-bar {
+  width: 100%;
+  padding: 10px;
+  background-color: rgb(242, 242, 242);
+  border: 1px solid rgb(209, 224, 209);
+  border-radius: 20px;
+}
+
+.social-search-bar input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 300px;
+}
+
+#search-bar:focus-within {
+  border-color: rgb(177, 220, 188);
+  box-shadow: 0 0 0 3px rgba(166, 222, 180, 0.25);
+}
+
+.community-title {
+  font-size: 30px;
+}
+
+.community-header {
+  margin-bottom: 50px;
+}
+
+#recipe-content-container {
+  display: flex;
 }
