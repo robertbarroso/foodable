@@ -47,14 +47,19 @@ VITE_SUPABASE_KEY=your-anon-key
 VITE_API_URL=http://localhost:5000/api
 ```
 
-Add server-only Supabase credentials to `server/.env`:
+Add the server configuration to `server/.env`:
 
 ```
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_KEY=your-service-role-key
+GEOAPIFY_API_KEY=your-geoapify-api-key
+NVIDIA_MODEL=meta/llama-3.1-8b-instruct
+NVIDIA_API_KEY=your-nvidia-api-key
+PORT=5001
+USE_MOCK_AI=false
 ```
 
-Never expose the service-role key in a `VITE_` variable.
+Never expose the service-role key in a `VITE_` variable. Set USE_MOCK_AI=true to test AI features without making requests to the NVIDIA API.
 
 ### 3. Create database tables
 
