@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 // Context
 import { selectUser } from "../auth/UserContext.jsx";
 
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
+
 function SignUpForm() {
   const navigate = useNavigate();
   const { setCurrentUser } = selectUser();
@@ -66,7 +68,7 @@ function SignUpForm() {
       };
 
       const signupResponse = await fetch(
-        "http://localhost:5001/api/auth/signup",
+        `${API_URL}/auth/signup`,
         {
           method: "POST",
           headers: {
@@ -97,7 +99,7 @@ function SignUpForm() {
       };
 
       const signinResponse = await fetch(
-        "http://localhost:5001/api/auth/signin",
+        `${API_URL}/auth/signin`,
         {
           method: "POST",
           headers: {
