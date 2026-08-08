@@ -99,6 +99,7 @@ a.active#nav-bar-design {
   width: auto;
   max-width: 80px;
   border-radius: 30px;
+  border: none;
   font-weight: 700;
   color: rgb(234, 253, 241);
 }
@@ -474,12 +475,16 @@ a.active#nav-bar-design {
 .post-information-full {
   flex: auto;
   display: flex;
+  align-items: center;
 }
 
 .post-information-content {
   margin-right: 40px;
 }
-
+.post-username {
+  padding: 9px;
+  border-radius: 10px;
+}
 #recipe-macros {
   width: 85%;
 
@@ -666,4 +671,24 @@ a.active#nav-bar-design {
 
 #recipe-content-container {
   display: flex;
+}
+.follow-render {
+  background-color: rgb(175, 213, 183);
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-left: 10px;
+  border: none;
+  font-weight: bold;
+  border-radius: 20px;
+  color: rgb(105, 141, 112);
+}
+
+.follow-render:hover {
+  background-color: rgb(185, 234, 196);
+  color: rgb(105, 141, 112);
+  cursor: pointer;
+  border-color: rgb(177, 220, 188);
+  box-shadow: 0 0 0 3px rgba(166, 222, 180, 0.25);
 }

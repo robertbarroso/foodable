@@ -1,8 +1,47 @@
+import FollowButton from "./FollowButton";
+import { selectUser } from "../auth/UserContext.jsx";
+import { useState } from "react";
+
 export default function RecipePost({ recipe_post }) {
+  const [actionError, setActionError] = useState(null);
+  const [isFollowing, setIsFollowing] = useState();
+
+  const { currentUser } = selectUser();
   if (!recipe_post) {
     console.log(recipe_post);
     console.error("ERROR: No recipe post has been found!", recipe_post);
     return <p>No recipe post received.</p>;
+  }
+
+  // When someone follow, add to the 'follows' table - same way as likes
+  async function handleFollow(post_id) {
+    if (!currentUser?.id) {
+      setActionError("Please sign in to follow.");
+      return;
+    }
+
+    const access_token = localStorage.getItem("supabase_access_token");
+
+    if (!access_token) {
+      console.error("ERROR: Missing token! (follow)");
+      setActionError("Missing sign in token!");
+      return;
+    }
+
+    setActionError(null);
+
+    // Update to show if followed or not
+
+    const response = await fetch(`${API_URL}/social-posts/{post_id}/follow`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`,
+      },
+      body: JSON.stringify({}),
+    });
+
+    const data = await response.json();
   }
 
   const recipeCreated = new Date(recipe_post.created_date).toLocaleDateString(
@@ -19,11 +58,9 @@ export default function RecipePost({ recipe_post }) {
       <article recipe-post-header>
         <h3 id="post-title">{recipe_post.recipe.title}</h3>
         <section className="post-information-full">
-          <p className="pill-render-post likes-render post-information-content">
-            ♥ {recipe_post.likes}
-          </p>
-          <p className="post-information-content">
+          <p className="post-information-content post-username">
             Created by <b>{recipe_post.profiles.username}</b>
+            <FollowButton />
           </p>
           <p className="post-information-content">
             Posted on <b>{recipeCreated}</b>
