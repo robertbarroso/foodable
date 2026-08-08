@@ -11,6 +11,9 @@ import {
 } from "../services/groceryLists.js";
 import "./GroceryList.css";
 
+// AI GROCERY LIST INTEGRATION //
+import AICreationModal from "../components/AICreationModal";
+
 function formatBudget(value) {
   if (value == null) return "No budget set";
   return `$${Number(value).toFixed(2)}`;
@@ -50,6 +53,9 @@ function GroceryList() {
   const [error, setError] = useState(null);
   const [itemError, setItemError] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
+
+  // AI GROCERY LIST INTEGRATION //
+  const [showAICreation, setShowAICreation] = useState(false);
   const [newListTitle, setNewListTitle] = useState("");
   const [creating, setCreating] = useState(false);
   const [quickAddName, setQuickAddName] = useState("");
@@ -396,6 +402,16 @@ function GroceryList() {
       <aside className="grocery-sidebar">
         <div className="grocery-sidebar__header">
           <h2>Lists</h2>
+
+          {/* --- AI GROCERY LIST INTEGRATION --- */}
+          <button
+            type="button"
+            className="grocery-button grocery-button--primary grocery-button--compact"
+            onClick={() => setShowAICreation(true)}
+          >
+            Create with AI
+          </button>
+
           <button
             type="button"
             className="grocery-button grocery-button--primary grocery-button--compact"
@@ -749,6 +765,20 @@ function GroceryList() {
           </div>
         </div>
       )}
+
+      {/* AI GROCERY LIST INTEGRATION */}
+      {showAICreation && (
+        <AICreationModal
+          mode="grocery"
+          onClose={() => setShowAICreation(false)}
+          onCreated={async (groceryList) => {
+            console.log(groceryList);
+            setShowAICreation(false);
+            await loadLists();
+          }}
+        />
+      )}
+
     </section>
   );
 }
