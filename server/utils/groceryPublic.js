@@ -3,7 +3,8 @@ import supabase from "../supabase.js";
 export async function findPublicList(listId) {
   return supabase
     .from("grocery_lists")
-    .select(`
+    .select(
+      `
       id,
       user_id,
       title,
@@ -21,7 +22,8 @@ export async function findPublicList(listId) {
         created_at,
         updated_at
       )
-    `)
+    `,
+    )
     .eq("id", listId)
     .eq("is_public", true)
     .maybeSingle();
@@ -60,16 +62,18 @@ export async function copyPublicListForUser(listId, userId) {
   const sourceItems = sourceList.grocery_list_items ?? [];
 
   if (sourceItems.length > 0) {
-    const { error: itemsError } = await supabase.from("grocery_list_items").insert(
-      sourceItems.map((item) => ({
-        list_id: newList.id,
-        name: item.name,
-        quantity: item.quantity,
-        category: item.category,
-        price: item.price,
-        is_purchased: false,
-      })),
-    );
+    const { error: itemsError } = await supabase
+      .from("grocery_list_items")
+      .insert(
+        sourceItems.map((item) => ({
+          list_id: newList.id,
+          name: item.name,
+          quantity: item.quantity,
+          category: item.category,
+          price: item.price,
+          is_purchased: false,
+        })),
+      );
 
     if (itemsError) {
       await supabase.from("grocery_lists").delete().eq("id", newList.id);
@@ -79,7 +83,8 @@ export async function copyPublicListForUser(listId, userId) {
 
   const { data: copiedList, error: loadError } = await supabase
     .from("grocery_lists")
-    .select(`
+    .select(
+      `
       id,
       title,
       is_public,
@@ -96,7 +101,8 @@ export async function copyPublicListForUser(listId, userId) {
         created_at,
         updated_at
       )
-    `)
+    `,
+    )
     .eq("id", newList.id)
     .eq("user_id", userId)
     .maybeSingle();
@@ -108,15 +114,8 @@ export async function copyPublicListForUser(listId, userId) {
   return { data: copiedList, status: 201 };
 }
 
-function formatBudgetContent(budgetEstimate) {
-  if (budgetEstimate == null) return "No budget set";
-  return `Estimated budget: $${Number(budgetEstimate).toFixed(2)}`;
-}
-
 export async function publishGroceryListToCommunity(list, userId) {
   const payload = {
-    title: list.title,
-    content: formatBudgetContent(list.budget_estimate),
     user_id: userId,
     post_type: 2,
     grocery_list_id: list.id,
@@ -137,8 +136,6 @@ export async function publishGroceryListToCommunity(list, userId) {
     const { data, error } = await supabase
       .from("posts")
       .update({
-        title: payload.title,
-        content: payload.content,
         user_id: payload.user_id,
         post_type: payload.post_type,
       })
@@ -149,7 +146,11 @@ export async function publishGroceryListToCommunity(list, userId) {
     return { data, error };
   }
 
-  const { data, error } = await supabase.from("posts").insert(payload).select("*").single();
+  const { data, error } = await supabase
+    .from("posts")
+    .insert(payload)
+    .select("*")
+    .single();
   return { data, error };
 }
 
