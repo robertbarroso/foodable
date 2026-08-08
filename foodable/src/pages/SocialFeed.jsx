@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import FeedItem from "../components/FeedItem.jsx";
-
+import SocialSearch from "../components/SocialSearch.jsx";
 import { selectUser } from "../auth/UserContext.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
@@ -44,6 +44,7 @@ export default function SocialFeed() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionError, setActionError] = useState(null);
+  const [searchText, setSearchText] = useState("");
 
   const { currentUser } = selectUser();
   async function loadCommunity() {
@@ -74,8 +75,16 @@ export default function SocialFeed() {
   // React optimization - useMemo, for each post that comes from 'toPostFeedItem', add to posts
   // Returns: feedItems (array);
   const feedItems = useMemo(() => {
-    return posts.map(toPostFeedItem);
-  }, [posts]);
+    const search = searchText.toLowerCase().trim();
+
+    return posts.map(toPostFeedItem).filter((item) => {
+      if (search === "") {
+        return true;
+      }
+
+      return item.title.toLowerCase().includes(search);
+    });
+  }, [posts, searchText]);
 
   function loadSelectedContent() {
     if (!selectedItem) {
@@ -150,47 +159,55 @@ export default function SocialFeed() {
   return (
     <section className="content-container">
       <section id="post-list">
-        <h3>Feed</h3>
-        {loading && <p className="community-message">Loading posts...</p>}
-        {actionError && (
-          <p className="community-message community-message--error">
-            {actionError}
-          </p>
-        )}
+        <div className="community-header">
+          <h3 className="community-title">Feed</h3>
 
-        {!loading &&
-          feedItems.map((item) => {
-            return (
-              <div key={item.key}>
-                <div
-                  className="social-button-posts"
-                  onClick={() => setSelectedItem(item.original)}
-                >
-                  <h3 className="post-title-render">{item.title}</h3>
-                  <section className="post-info">
-                    <p className="post-author-render">By {item.username}</p>
-                    <p className="post-date-render">{item.created}</p>
-                  </section>
-                  <div className="pill-container">
-                    <button
-                      className="pill-render likes-render"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleLike(item.original.post_id);
-                      }}
-                    >
-                      ♥ {item.likes}
-                    </button>
+          <SocialSearch searchText={searchText} setSearchText={setSearchText} />
+        </div>
 
-                    <p className="pill-render tag-render">
-                      {item.kind === "recipe" ? "Recipe" : "Grocery"}
-                    </p>
+        <div>
+          {loading && <p className="community-message">Loading posts...</p>}
+
+          {actionError && (
+            <p className="community-message community-message--error">
+              {actionError}
+            </p>
+          )}
+
+          {!loading &&
+            feedItems.map((item) => {
+              return (
+                <div key={item.key}>
+                  <div
+                    className="social-button-posts"
+                    onClick={() => setSelectedItem(item.original)}
+                  >
+                    <h3 className="post-title-render">{item.title}</h3>
+                    <section className="post-info">
+                      <p className="post-author-render">By {item.username}</p>
+                      <p className="post-date-render">{item.created}</p>
+                    </section>
+                    <div className="pill-container">
+                      <button
+                        className="pill-render likes-render"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleLike(item.original.post_id);
+                        }}
+                      >
+                        ♥ {item.likes}
+                      </button>
+
+                      <p className="pill-render tag-render">
+                        {item.kind === "recipe" ? "Recipe" : "Grocery"}
+                      </p>
+                    </div>
+                    <div className="post-divider"></div>
                   </div>
-                  <div className="post-divider"></div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+        </div>
       </section>
 
       <section id="content-view">{loadSelectedContent()}</section>
