@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // Context
 import { selectUser } from "../auth/UserContext.jsx";
@@ -80,10 +81,15 @@ function SignUpForm() {
       console.log(signupData);
 
       if (signupData.success) {
+        toast.success("Account created. Please sign in.");
         navigate("/");
+        return;
       }
+
+      toast.error(signupData.message || "Sign up failed");
     } catch (error) {
       console.error(error);
+      toast.error(error.message || "Sign up failed");
     }
   };
 
@@ -123,10 +129,17 @@ function SignUpForm() {
           JSON.stringify(signinData.profile),
         );
 
+        toast.success(
+          `Welcome back${signinData.profile?.first_name ? `, ${signinData.profile.first_name}` : ""}!`,
+        );
         navigate("/");
+        return;
       }
+
+      toast.error(signinData.message || "Sign in failed");
     } catch (error) {
       console.error(error);
+      toast.error(error.message || "Sign in failed");
     }
   };
 

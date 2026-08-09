@@ -187,18 +187,31 @@ router.post("/:post_id/like", requireAuth, async (req, res) => {
       }
 
       // Grocery posts: save a private copy for the liking user.
+      let copiedList = null;
       if (post_row_data.grocery_list_id) {
         const copyResult = await copyPublicListForUser(
           post_row_data.grocery_list_id,
           user_id,
         );
-        if (copyResult.error) {
+        if (copyResult.data) {
+          copiedList = {
+            id: copyResult.data.id,
+            title: copyResult.data.title,
+          };
+        } else if (copyResult.error) {
           console.error(
             "ERROR: Failed to copy grocery list on like",
             copyResult.error,
           );
         }
       }
+
+      return res.status(200).json({
+        success: true,
+        user_id,
+        post_id,
+        copiedList,
+      });
     }
     res.status(200).json({
       success: true,
