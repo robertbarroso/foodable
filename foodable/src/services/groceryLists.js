@@ -1,5 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
-const TOKEN_STORAGE_KEY = "foodable_access_token";
+const TOKEN_STORAGE_KEY = "supabase_access_token";
 
 function getAccessToken() {
   try {

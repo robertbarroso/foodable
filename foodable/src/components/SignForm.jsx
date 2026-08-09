@@ -13,13 +13,14 @@ function SignUpForm() {
   // User input states
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
+
+  const [emailSignUp, setEmailSignUp] = useState("");
+  const [emailSignIn, setEmailSignIn] = useState("");
   // For sign-up
   const [usernameSignUp, setUserNameSignUp] = useState("");
   const [passwordSignUp, setPasswordSignUp] = useState("");
 
   // For sign-In
-  const [usernameSignIn, setUserNameSignIn] = useState("");
   const [passwordSignIn, setPasswordSignIn] = useState("");
 
   const handleFirstName = (event) => {
@@ -30,16 +31,16 @@ function SignUpForm() {
     setLastName(event.target.value);
   };
 
-  const handleEmail = (event) => {
-    setEmail(event.target.value);
+  const handleEmailSignUp = (event) => {
+    setEmailSignUp(event.target.value);
+  };
+
+  const handleEmailSignIn = (event) => {
+    setEmailSignIn(event.target.value);
   };
 
   const handleUsernameSignUp = (event) => {
     setUserNameSignUp(event.target.value);
-  };
-
-  const handleUsernameSignIn = (event) => {
-    setUserNameSignIn(event.target.value);
   };
 
   const handlePasswordSignUp = (event) => {
@@ -62,21 +63,18 @@ function SignUpForm() {
       const signupForm = {
         firstName,
         lastName,
-        email,
+        email: emailSignUp,
         usernameSignUp,
         passwordSignUp,
       };
 
-      const signupResponse = await fetch(
-        `${API_URL}/auth/signup`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(signupForm),
+      const signupResponse = await fetch(`${API_URL}/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(signupForm),
+      });
 
       const signupData = await signupResponse.json();
       console.log(signupData);
@@ -94,20 +92,17 @@ function SignUpForm() {
 
     try {
       const signinForm = {
-        email,
+        email: emailSignIn,
         passwordSignIn,
       };
 
-      const signinResponse = await fetch(
-        `${API_URL}/auth/signin`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(signinForm),
+      const signinResponse = await fetch(`${API_URL}/auth/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(signinForm),
+      });
 
       const signinData = await signinResponse.json();
       console.log("signinData");
@@ -161,13 +156,13 @@ function SignUpForm() {
             placeholder="Last Name"
           ></input>
 
-          <label htmlFor="email-input"></label>
+          <label htmlFor="signup-email-input"></label>
           <input
             className="sign-up-textfield"
-            id="email-input"
+            id="signup-email-input"
             type="text"
-            value={email}
-            onChange={handleEmail}
+            value={emailSignUp}
+            onChange={handleEmailSignUp}
             placeholder="Email"
           ></input>
 
@@ -204,17 +199,17 @@ function SignUpForm() {
       <section id="sign-in-form">
         <h3>Sign In</h3>
         <form id="sign-in-section" onSubmit={handleSignIn}>
-          <label htmlFor="email-input"></label>
+          <label htmlFor="signin-email-input"></label>
           <input
             className="sign-up-textfield"
-            id="email-input"
+            id="signin-email-input"
             type="text"
-            value={email}
-            onChange={handleEmail}
+            value={emailSignIn}
+            onChange={handleEmailSignIn}
             placeholder="Email"
           ></input>
 
-          <label htmlFor="password-input"></label>
+          <label htmlFor="password-input-signin"></label>
           <input
             className="sign-up-textfield"
             id="password-input-signin"
