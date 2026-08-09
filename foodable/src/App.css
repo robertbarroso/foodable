@@ -114,6 +114,16 @@ a.active#nav-bar-design {
   color: #6b7280;
 }
 
+.pill-render {
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  width: auto;
+  max-width: 80px;
+  border-radius: 30px;
+  border: none;
 .post-title-render {
   margin: 0 0 0.4rem;
   font-size: 1rem;
