@@ -122,9 +122,11 @@ async function handleClearChat() {
   return (
     <main className="ai-chat-page">
       <header className="ai-chat-header">
-        <h1>Foodable AI Assistant</h1>
+        <div>
+          <h1>Foodable AI Assistant</h1>
 
-        <p>Get help creating affordable meals, grocery lists, and recipes.</p>
+          <p>Get help creating affordable meals, grocery lists, and recipes.</p>
+        </div>
 
         <button
           type="button"
@@ -218,7 +220,7 @@ async function handleClearChat() {
             type="text"
             value={input}
             onChange={(event) => setInput(event.target.value)}
-            placeholder="Create a healthy sandwich recipe..."
+            placeholder="Ask for a recipe, meal idea, or grocery list..."
             maxLength={2000}
 
             // Disable input while history is loading

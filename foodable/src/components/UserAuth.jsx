@@ -17,13 +17,13 @@ export default function UserAuth() {
 
   if (currentUser) {
     return (
-      <>
+      <div className="user-auth">
         <span>Hello, {currentUser.first_name}</span>
-        <button onClick={handleLogout}>
+        <button className="logout-button" onClick={handleLogout}>
           Logout
         </button>
-      </>
-    )
+      </div>
+    );
   }
 
   return (
