@@ -1,5 +1,9 @@
 import FollowButton from "./FollowButton";
+import { selectUser } from "../auth/UserContext.jsx";
+import { useState } from "react";
+
 export default function GroceryPost({ grocery_post }) {
+  const { currentUser } = selectUser();
   // If there is no reciple post
   if (!grocery_post) {
     console.error("ERROR: No grocery post has been found!", grocery_post);
@@ -22,7 +26,10 @@ export default function GroceryPost({ grocery_post }) {
         <div className="post-information-full">
           <p className="post-information-content">
             Created by <b>{grocery_post.profiles.username}</b>
-            <FollowButton followed_user_id={grocery_post.user_id} />
+            <FollowButton
+              current_user_id={currentUser?.id}
+              followed_user_id={grocery_post.user_id}
+            />{" "}
           </p>
           <p className="post-information-content">
             Posted on <b>{groceryCreated}</b>

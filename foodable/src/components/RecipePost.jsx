@@ -32,7 +32,7 @@ export default function RecipePost({ recipe_post }) {
 
     // Update to show if followed or not
 
-    const response = await fetch(`${API_URL}/social-posts/{post_id}/follow`, {
+    const response = await fetch(`${API_URL}/follow`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -60,7 +60,10 @@ export default function RecipePost({ recipe_post }) {
         <section className="post-information-full">
           <p className="post-information-content post-username">
             Created by <b>{recipe_post.profiles.username}</b>
-            <FollowButton followed_user_id={recipe_post.profiles.id} />
+            <FollowButton
+              current_user_id={currentUser?.id}
+              followed_user_id={recipe_post.user_id}
+            />
           </p>
           <p className="post-information-content">
             Posted on <b>{recipeCreated}</b>
