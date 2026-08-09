@@ -1,3 +1,4 @@
+import FollowButton from "./FollowButton";
 export default function GroceryPost({ grocery_post }) {
   // If there is no reciple post
   if (!grocery_post) {
@@ -24,6 +25,7 @@ export default function GroceryPost({ grocery_post }) {
           </p>
           <p className="post-information-content">
             Created by <b>{grocery_post.profiles.username}</b>
+            <FollowButton followed_user_id={grocery_post.user_id} />
           </p>
           <p className="post-information-content">
             Posted on <b>{groceryCreated}</b>

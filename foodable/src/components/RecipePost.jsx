@@ -1,3 +1,5 @@
+import FollowButton from "./FollowButton";
+
 export default function RecipePost({ recipe_post }) {
   if (!recipe_post) {
     console.log(recipe_post);
@@ -24,6 +26,7 @@ export default function RecipePost({ recipe_post }) {
           </p>
           <p className="post-information-content">
             Created by <b>{recipe_post.profiles.username}</b>
+            <FollowButton followed_user_id={recipe_post.profiles.id} />
           </p>
           <p className="post-information-content">
             Posted on <b>{recipeCreated}</b>
