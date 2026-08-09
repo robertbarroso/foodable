@@ -10,11 +10,15 @@ export default function RecipeCard({recipe, recipeList, setRecipeList}) {
     return (
     <div
         key={recipe.id}
+        className="recipe-card"
         style={{
-            border: "1px solid lightgray",
-            padding: "10px",
-            backgroundColor: "white",
+            border: "1px solid #dfe7e2",
+            borderRadius: "14px",
+            padding: "20px",
+            backgroundColor: "#ffffff",
             width: "400px",
+            boxShadow: "0 4px 14px rgba(0, 0, 0, 0.04)",
+            transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
         }}
         >
         <h2>{recipe.title}</h2>
@@ -45,8 +49,8 @@ export default function RecipeCard({recipe, recipeList, setRecipeList}) {
             <li key={index}>{step}</li>
             ))}
         </ol>
-        <div>
-            <button onClick={() => setIsOpen(true)}>Edit Recipe</button>
+        <div className="recipe-card-actions">
+            <button className="recipe-edit-button" onClick={() => setIsOpen(true)}>Edit Recipe</button>
             <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
                 <EditRecipe recipe={recipe} recipeList={recipeList} setRecipeList={setRecipeList} setIsOpen={setIsOpen}/>
             </Modal>

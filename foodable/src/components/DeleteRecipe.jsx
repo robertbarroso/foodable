@@ -22,5 +22,5 @@ export default function DeleteRecipe({id, recipeList, setRecipeList}) {
         }
     }
 
-    return <button onClick={() => handleDelete(id)}>Delete Recipe</button>
+    return <button className="recipe-delete-button" onClick={() => handleDelete(id)}>Delete Recipe</button>
 }

@@ -1,13 +1,29 @@
 import { selectUser } from "../auth/UserContext";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function UserAuth() {
-  const { currentUser } = selectUser();
+  const { currentUser, setCurrentUser } = selectUser();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem("supabase_profile");
+    localStorage.removeItem("supabase_access_token")
+
+    navigate("/")
+  }
 
   let buttonText = "Log in / Sign up";
 
   if (currentUser) {
-    buttonText = `Hello, ${currentUser.first_name}`;
+    return (
+      <div className="user-auth">
+        <span>Hello, {currentUser.first_name}</span>
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
+    );
   }
 
   return (

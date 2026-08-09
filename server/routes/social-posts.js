@@ -1,11 +1,9 @@
 import express from "express";
 import { supabaseService } from "../supabase.js";
-//import { selectUser } from "../../foodable/src/auth/UserContext.jsx";
 import requireAuth from "../middleware/requireAuth.js";
+import { copyPublicListForUser } from "../utils/groceryPublic.js";
 
 const router = express.Router();
-
-//const currentUser = selectUser();
 
 // GET: All current social posts
 router.get("/", async (req, res) => {
@@ -163,7 +161,7 @@ router.post("/:post_id/like", requireAuth, async (req, res) => {
       const { data: post_row_data, error: post_fetch_error } =
         await supabaseService
           .from("posts")
-          .select("likes")
+          .select("likes, grocery_list_id")
           .eq("post_id", post_id)
           .single();
       // If the fetch failes
@@ -187,6 +185,33 @@ router.post("/:post_id/like", requireAuth, async (req, res) => {
           error: "ERROR: Failed to increment the likes by 1",
         });
       }
+
+      // Grocery posts: save a private copy for the liking user.
+      let copiedList = null;
+      if (post_row_data.grocery_list_id) {
+        const copyResult = await copyPublicListForUser(
+          post_row_data.grocery_list_id,
+          user_id,
+        );
+        if (copyResult.data) {
+          copiedList = {
+            id: copyResult.data.id,
+            title: copyResult.data.title,
+          };
+        } else if (copyResult.error) {
+          console.error(
+            "ERROR: Failed to copy grocery list on like",
+            copyResult.error,
+          );
+        }
+      }
+
+      return res.status(200).json({
+        success: true,
+        user_id,
+        post_id,
+        copiedList,
+      });
     }
     res.status(200).json({
       success: true,

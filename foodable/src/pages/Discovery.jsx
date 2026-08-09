@@ -27,7 +27,12 @@ function Discovery() {
 
   return (
     <div className="discovery-container">
-      <h1>Find Food Near You</h1>
+      <h1>Discover Affordable Food Near You</h1>
+
+      <p>
+        Find nearby grocery stores and food retailers where you can shop for
+        nutritious, budget-friendly options.
+      </p>
 
       <form onSubmit={handleSubmit}>
         <input
