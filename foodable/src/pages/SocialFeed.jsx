@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import FeedItem from "../components/FeedItem.jsx";
 import SocialSearch from "../components/SocialSearch.jsx";
 import { selectUser } from "../auth/UserContext.jsx";
@@ -103,7 +104,7 @@ export default function SocialFeed() {
 
   async function handleLike(post_id) {
     if (!currentUser?.id) {
-      setActionError("Please sign in to like posts.");
+      toast.error("Please sign in to like posts.");
       return;
     }
 
@@ -111,7 +112,7 @@ export default function SocialFeed() {
 
     if (!access_token) {
       console.error("ERROR: Missing token!");
-      setActionError("Missing sign in token!");
+      toast.error("Missing sign in token!");
       return;
     }
 
@@ -149,8 +150,13 @@ export default function SocialFeed() {
       );
 
       console.error("ERROR: Failed to like post", data);
+      toast.error(data.error || "Failed to like post");
       setActionError(data.error || "Failed to like post");
       return;
+    }
+
+    if (data.copiedList) {
+      toast.success(`Saved "${data.copiedList.title}" to your groceries`);
     }
 
     console.log(data);

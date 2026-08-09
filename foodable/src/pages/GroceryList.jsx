@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import {
   createGroceryList,
   createGroceryListItem,
@@ -89,6 +90,7 @@ function GroceryList() {
       setLists(data);
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Failed to load grocery lists");
     } finally {
       setLoading(false);
     }
@@ -121,6 +123,7 @@ function GroceryList() {
       await refreshSelectedList(listId);
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Failed to open list");
     }
   }
 
@@ -130,6 +133,7 @@ function GroceryList() {
     const title = newListTitle.trim();
     if (!title) {
       setError("List name is required");
+      toast.error("List name is required");
       return;
     }
 
@@ -142,8 +146,10 @@ function GroceryList() {
       setIsCreating(false);
       await loadLists();
       setSelectedList({ ...created, grocery_list_items: [] });
+      toast.success(`Created "${created.title}"`);
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Failed to create list");
     } finally {
       setCreating(false);
     }
@@ -164,6 +170,7 @@ function GroceryList() {
     }
 
     setError(null);
+    const deletedTitle = selectedList.title;
 
     try {
       await deleteGroceryList(selectedList.id);
@@ -171,8 +178,10 @@ function GroceryList() {
       setConfirmDelete(false);
       setIsEditingList(false);
       await loadLists();
+      toast.success(`Deleted "${deletedTitle}"`);
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Failed to delete list");
     }
   }
 
@@ -184,6 +193,7 @@ function GroceryList() {
     const name = quickAddName.trim();
     if (!name) {
       setItemError("Type an item name to add it");
+      toast.error("Type an item name to add it");
       return;
     }
 
@@ -195,8 +205,10 @@ function GroceryList() {
       setQuickAddName("");
       await refreshSelectedList(selectedList.id);
       await loadLists();
+      toast.success(`Added "${name}"`);
     } catch (err) {
       setItemError(err.message);
+      toast.error(err.message || "Failed to add item");
     } finally {
       setAddingItem(false);
     }
@@ -215,6 +227,7 @@ function GroceryList() {
       await loadLists();
     } catch (err) {
       setItemError(err.message);
+      toast.error(err.message || "Failed to update item");
     }
   }
 
@@ -252,14 +265,17 @@ function GroceryList() {
     const title = listForm.title.trim();
     const budgetEstimate =
       listForm.budget_estimate === "" ? null : Number(listForm.budget_estimate);
+    const wasPublic = selectedList.is_public;
 
     if (!title) {
       setListSettingsError("List name is required");
+      toast.error("List name is required");
       return;
     }
 
     if (budgetEstimate !== null && (!Number.isFinite(budgetEstimate) || budgetEstimate < 0)) {
       setListSettingsError("Budget estimate must be a non-negative number");
+      toast.error("Budget estimate must be a non-negative number");
       return;
     }
 
@@ -275,8 +291,17 @@ function GroceryList() {
       await refreshSelectedList(selectedList.id);
       await loadLists();
       setIsEditingList(false);
+
+      if (!wasPublic && listForm.is_public) {
+        toast.success(`"${title}" published to Community`);
+      } else if (wasPublic && !listForm.is_public) {
+        toast.success(`"${title}" removed from Community`);
+      } else {
+        toast.success("List settings saved");
+      }
     } catch (err) {
       setListSettingsError(err.message);
+      toast.error(err.message || "Failed to save list settings");
     } finally {
       setSavingList(false);
     }
@@ -314,6 +339,7 @@ function GroceryList() {
     const name = itemForm.name.trim();
     if (!name) {
       setItemError("Item name is required");
+      toast.error("Item name is required");
       return;
     }
 
@@ -331,8 +357,10 @@ function GroceryList() {
       await loadLists();
       setEditingItem(null);
       setConfirmItemDelete(false);
+      toast.success(`Updated "${name}"`);
     } catch (err) {
       setItemError(err.message);
+      toast.error(err.message || "Failed to update item");
     } finally {
       setSavingItem(false);
     }
@@ -348,6 +376,7 @@ function GroceryList() {
 
     setSavingItem(true);
     setItemError(null);
+    const deletedName = editingItem.name;
 
     try {
       await deleteGroceryListItem(selectedList.id, editingItem.id);
@@ -355,8 +384,10 @@ function GroceryList() {
       await loadLists();
       setEditingItem(null);
       setConfirmItemDelete(false);
+      toast.success(`Deleted "${deletedName}"`);
     } catch (err) {
       setItemError(err.message);
+      toast.error(err.message || "Failed to delete item");
     } finally {
       setSavingItem(false);
     }
@@ -775,6 +806,9 @@ function GroceryList() {
             console.log(groceryList);
             setShowAICreation(false);
             await loadLists();
+            toast.success(
+              `Created "${groceryList?.title ?? "grocery list"}" with AI`,
+            );
           }}
         />
       )}
