@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useRecipeForm from "../hooks/useRecipeForm";
+import toast from "react-hot-toast"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
 
@@ -68,8 +69,12 @@ export default function EditRecipe({recipe, recipeList, setRecipeList, setIsOpen
                 )
             );
             setIsOpen(false)
+
+            toast.success("Recipe updated successfully!");
         } catch (error) {
             console.error(error)
+
+            toast.error("Something went wrong... Please try again.");
         }
     }
 
