@@ -7,11 +7,8 @@ import RecipePost from "./RecipePost";
 
 export default function FeedItem({ incoming_data }) {
   // Error handling: If empty
-  console.log("INCOMING_DATA:");
 
-  console.log(incoming_data);
   if (!incoming_data) {
-    // Console report
     console.error(
       "ERROR: Incoming content for social post is null or undefined",
       incoming_data,

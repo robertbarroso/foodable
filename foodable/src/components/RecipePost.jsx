@@ -8,7 +8,6 @@ export default function RecipePost({ recipe_post }) {
 
   const { currentUser } = selectUser();
   if (!recipe_post) {
-    console.log(recipe_post);
     console.error("ERROR: No recipe post has been found!", recipe_post);
     return <p>No recipe post received.</p>;
   }

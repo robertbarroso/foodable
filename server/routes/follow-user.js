@@ -8,10 +8,6 @@ const router = express.Router();
 router.post("/", requireAuth, async (req, res) => {
   const user_id = req.user.id;
   const { followed_id } = req.body;
-  console.log({
-    user_id,
-    followed_id,
-  });
   try {
     const { data, error } = await supabaseService
       .from("follow")
@@ -68,10 +64,7 @@ router.get("/check/:followed_id", requireAuth, async (req, res) => {
 router.delete("/", requireAuth, async (req, res) => {
   const user_id = req.user.id;
   const { followed_id } = req.body;
-  console.log({
-    user_id,
-    followed_id,
-  });
+
   try {
     const { data, error } = await supabaseService
       .from("follow")

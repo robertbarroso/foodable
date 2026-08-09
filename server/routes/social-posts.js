@@ -34,8 +34,6 @@ router.get("/", async (req, res) => {
         }
 
         post.recipe = recipeData;
-
-        console.log("Recipe attached:", post.post_id);
       }
 
       if (post.grocery_list_id) {
@@ -54,7 +52,6 @@ router.get("/", async (req, res) => {
         post.grocery = groceryData;
       }
     }
-    console.log(JSON.stringify(data, null, 2));
     return res.status(200).json(data);
   } catch (error) {
     res.status(500).json({

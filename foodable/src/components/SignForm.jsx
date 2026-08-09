@@ -78,7 +78,6 @@ function SignUpForm() {
       });
 
       const signupData = await signupResponse.json();
-      console.log(signupData);
 
       if (signupData.success) {
         toast.success("Account created. Please sign in.");
@@ -111,7 +110,6 @@ function SignUpForm() {
       });
 
       const signinData = await signinResponse.json();
-      console.log("signinData");
 
       if (signinData.success) {
         // Save access token, otherwise null

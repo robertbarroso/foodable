@@ -6,11 +6,6 @@ const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
 export default function FollowButton({ current_user_id, followed_user_id }) {
   const [isFollowing, setIsFollowing] = useState(false);
 
-  // If the user id and followed id is the same, return null.
-  if (current_user_id === followed_user_id) {
-    return null;
-  }
-
   async function checkFollowStatus() {
     const access_token = localStorage.getItem("supabase_access_token");
 
@@ -33,6 +28,11 @@ export default function FollowButton({ current_user_id, followed_user_id }) {
       checkFollowStatus();
     }
   }, [current_user_id, followed_user_id]);
+
+  // If the user id and followed id is the same, return null.
+  if (current_user_id === followed_user_id) {
+    return null;
+  }
 
   // Handling the follow action
   // Handling the follow action

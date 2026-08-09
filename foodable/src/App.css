@@ -1193,3 +1193,40 @@ a.active#nav-bar-design {
   margin-left: 4px;
   border-left: 1px solid #e7e5e4;
 }
+
+.profile-modal {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+}
+
+.profile-card {
+  background: white;
+
+  width: 900px;
+  min-height: 600px;
+
+  padding: 2rem;
+
+  border-radius: 12px;
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+
+  overflow-y: auto;
+}
+
+.profile-columns {
+  display: flex;
+  gap: 2rem;
+}
+
+.profile-columns section {
+  flex: 1;
+}

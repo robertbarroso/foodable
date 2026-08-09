@@ -3,6 +3,8 @@ import { selectUser } from "../auth/UserContext.jsx";
 import { useState } from "react";
 
 export default function GroceryPost({ grocery_post }) {
+  console.log("GROCERY OBJECT:", grocery_post.grocery);
+
   const { currentUser } = selectUser();
   // If there is no reciple post
   if (!grocery_post) {
@@ -37,7 +39,7 @@ export default function GroceryPost({ grocery_post }) {
         </div>
         <section className="grocery-content-container">
           <div className="grocery-list-render">
-            {grocery_post.grocery.items.map((item, index) => (
+            {grocery_post.grocery.items?.map((item, index) => (
               <div className="grocery-card">
                 <div className="grocery-index label-counter"> {index + 1} </div>
                 <div className="grocery-content label-text-title">

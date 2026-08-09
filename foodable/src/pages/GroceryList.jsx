@@ -107,8 +107,14 @@ function GroceryList() {
   }, [loadLists]);
 
   const items = selectedList?.grocery_list_items ?? [];
-  const toBuy = useMemo(() => items.filter((item) => !item.is_purchased), [items]);
-  const purchased = useMemo(() => items.filter((item) => item.is_purchased), [items]);
+  const toBuy = useMemo(
+    () => items.filter((item) => !item.is_purchased),
+    [items],
+  );
+  const purchased = useMemo(
+    () => items.filter((item) => item.is_purchased),
+    [items],
+  );
   const toBuyGroups = useMemo(() => groupItemsByCategory(toBuy), [toBuy]);
 
   async function handleSelectList(listId) {
@@ -273,7 +279,10 @@ function GroceryList() {
       return;
     }
 
-    if (budgetEstimate !== null && (!Number.isFinite(budgetEstimate) || budgetEstimate < 0)) {
+    if (
+      budgetEstimate !== null &&
+      (!Number.isFinite(budgetEstimate) || budgetEstimate < 0)
+    ) {
       setListSettingsError("Budget estimate must be a non-negative number");
       toast.error("Budget estimate must be a non-negative number");
       return;
@@ -412,7 +421,9 @@ function GroceryList() {
             </span>
             <span className="grocery-item-row__body">
               <span className="grocery-item-row__name">{item.name}</span>
-              {item.quantity && <span className="grocery-item-row__qty">{item.quantity}</span>}
+              {item.quantity && (
+                <span className="grocery-item-row__qty">{item.quantity}</span>
+              )}
             </span>
           </button>
           <button
@@ -453,7 +464,9 @@ function GroceryList() {
         </div>
 
         {loading && <p className="grocery-message">Loading lists...</p>}
-        {error && !isCreating && <p className="grocery-message grocery-message--error">{error}</p>}
+        {error && !isCreating && (
+          <p className="grocery-message grocery-message--error">{error}</p>
+        )}
 
         {!loading && lists.length === 0 && (
           <p className="grocery-message">No lists yet. Tap + New to start.</p>
@@ -467,13 +480,21 @@ function GroceryList() {
                 <button
                   type="button"
                   className={`grocery-list-menu__item${
-                    selectedList?.id === list.id ? " grocery-list-menu__item--active" : ""
+                    selectedList?.id === list.id
+                      ? " grocery-list-menu__item--active"
+                      : ""
                   }`}
                   onClick={() => handleSelectList(list.id)}
                 >
                   <span className="grocery-list-menu__row">
-                    <span className="grocery-list-menu__title">{list.title}</span>
-                    {remaining > 0 && <span className="grocery-list-menu__badge">{remaining}</span>}
+                    <span className="grocery-list-menu__title">
+                      {list.title}
+                    </span>
+                    {remaining > 0 && (
+                      <span className="grocery-list-menu__badge">
+                        {remaining}
+                      </span>
+                    )}
                   </span>
                   <span className="grocery-list-menu__meta">
                     {list.is_public ? "Shared" : "Private"}
@@ -497,7 +518,8 @@ function GroceryList() {
               <div>
                 <h2>{selectedList.title}</h2>
                 <p className="grocery-content__subtitle">
-                  {toBuy.length} to get · {purchased.length} in cart · {formatBudget(selectedList.budget_estimate)}
+                  {toBuy.length} to get · {purchased.length} in cart ·{" "}
+                  {formatBudget(selectedList.budget_estimate)}
                 </p>
               </div>
               <div className="grocery-content__actions">
@@ -511,15 +533,27 @@ function GroceryList() {
                 {confirmDelete ? (
                   <>
                     <span className="grocery-confirm-text">Delete list?</span>
-                    <button type="button" className="grocery-button grocery-button--danger" onClick={handleDeleteList}>
+                    <button
+                      type="button"
+                      className="grocery-button grocery-button--danger"
+                      onClick={handleDeleteList}
+                    >
                       Delete
                     </button>
-                    <button type="button" className="grocery-button" onClick={() => setConfirmDelete(false)}>
+                    <button
+                      type="button"
+                      className="grocery-button"
+                      onClick={() => setConfirmDelete(false)}
+                    >
                       Cancel
                     </button>
                   </>
                 ) : (
-                  <button type="button" className="grocery-button grocery-button--danger" onClick={handleDeleteList}>
+                  <button
+                    type="button"
+                    className="grocery-button grocery-button--danger"
+                    onClick={handleDeleteList}
+                  >
                     Delete
                   </button>
                 )}
@@ -535,12 +569,20 @@ function GroceryList() {
                 onChange={(e) => setQuickAddName(e.target.value)}
                 autoFocus
               />
-              <button type="submit" className="grocery-button grocery-button--primary" disabled={addingItem}>
+              <button
+                type="submit"
+                className="grocery-button grocery-button--primary"
+                disabled={addingItem}
+              >
                 {addingItem ? "..." : "Add"}
               </button>
             </form>
 
-            {itemError && <p className="grocery-message grocery-message--error">{itemError}</p>}
+            {itemError && (
+              <p className="grocery-message grocery-message--error">
+                {itemError}
+              </p>
+            )}
 
             <div className="grocery-items">
               {items.length === 0 ? (
@@ -550,12 +592,21 @@ function GroceryList() {
               ) : (
                 <>
                   {toBuy.length === 0 ? (
-                    <p className="grocery-message grocery-message--center">All done! Everything is in your cart.</p>
+                    <p className="grocery-message grocery-message--center">
+                      All done! Everything is in your cart.
+                    </p>
                   ) : (
                     toBuyGroups.map((group) => (
-                      <section key={group.category} className="grocery-category">
-                        <h3 className="grocery-category__title">{group.category}</h3>
-                        <ul className="grocery-items__list">{group.items.map(renderItemRow)}</ul>
+                      <section
+                        key={group.category}
+                        className="grocery-category"
+                      >
+                        <h3 className="grocery-category__title">
+                          {group.category}
+                        </h3>
+                        <ul className="grocery-items__list">
+                          {group.items.map(renderItemRow)}
+                        </ul>
                       </section>
                     ))
                   )}
@@ -570,7 +621,9 @@ function GroceryList() {
                         In cart ({purchased.length}) {showPurchased ? "▾" : "▸"}
                       </button>
                       {showPurchased && (
-                        <ul className="grocery-items__list">{purchased.map(renderItemRow)}</ul>
+                        <ul className="grocery-items__list">
+                          {purchased.map(renderItemRow)}
+                        </ul>
                       )}
                     </section>
                   )}
@@ -589,8 +642,12 @@ function GroceryList() {
             role="dialog"
             aria-labelledby="new-list-title"
           >
-            <h3 id="new-list-title" className="grocery-modal__title">New list</h3>
-            <p className="grocery-modal__hint">Name your shopping list. Examples: Costco, Weekly, Party.</p>
+            <h3 id="new-list-title" className="grocery-modal__title">
+              New list
+            </h3>
+            <p className="grocery-modal__hint">
+              Name your shopping list. Examples: Costco, Weekly, Party.
+            </p>
             <form className="grocery-modal__form" onSubmit={handleCreateList}>
               <input
                 type="text"
@@ -600,12 +657,25 @@ function GroceryList() {
                 onChange={(e) => setNewListTitle(e.target.value)}
                 autoFocus
               />
-              {error && <p className="grocery-message grocery-message--error">{error}</p>}
+              {error && (
+                <p className="grocery-message grocery-message--error">
+                  {error}
+                </p>
+              )}
               <div className="grocery-modal__actions">
-                <button type="button" className="grocery-button" onClick={handleCancelCreate} disabled={creating}>
+                <button
+                  type="button"
+                  className="grocery-button"
+                  onClick={handleCancelCreate}
+                  disabled={creating}
+                >
                   Cancel
                 </button>
-                <button type="submit" className="grocery-button grocery-button--primary" disabled={creating}>
+                <button
+                  type="submit"
+                  className="grocery-button grocery-button--primary"
+                  disabled={creating}
+                >
                   {creating ? "Creating..." : "Create list"}
                 </button>
               </div>
@@ -615,7 +685,10 @@ function GroceryList() {
       )}
 
       {isEditingList && selectedList && (
-        <div className="grocery-modal-backdrop" onClick={handleCloseListSettings}>
+        <div
+          className="grocery-modal-backdrop"
+          onClick={handleCloseListSettings}
+        >
           <div
             className="grocery-modal"
             onClick={(event) => event.stopPropagation()}
@@ -623,10 +696,17 @@ function GroceryList() {
             aria-modal="true"
             aria-labelledby="list-settings-title"
           >
-            <h3 id="list-settings-title" className="grocery-modal__title">List settings</h3>
-            <p className="grocery-modal__hint">Update the list name, budget, and visibility.</p>
+            <h3 id="list-settings-title" className="grocery-modal__title">
+              List settings
+            </h3>
+            <p className="grocery-modal__hint">
+              Update the list name, budget, and visibility.
+            </p>
 
-            <form className="grocery-modal__form" onSubmit={handleSaveListSettings}>
+            <form
+              className="grocery-modal__form"
+              onSubmit={handleSaveListSettings}
+            >
               <label className="grocery-modal__field">
                 <span>List name</span>
                 <input
@@ -658,7 +738,9 @@ function GroceryList() {
               <label className="grocery-visibility-control">
                 <span>
                   <strong>Public list</strong>
-                  <small>Allow this list to be shared with the community.</small>
+                  <small>
+                    Allow this list to be shared with the community.
+                  </small>
                 </span>
                 <input
                   type="checkbox"
@@ -670,7 +752,9 @@ function GroceryList() {
               </label>
 
               {listSettingsError && (
-                <p className="grocery-message grocery-message--error">{listSettingsError}</p>
+                <p className="grocery-message grocery-message--error">
+                  {listSettingsError}
+                </p>
               )}
 
               <div className="grocery-modal__actions">
@@ -704,8 +788,12 @@ function GroceryList() {
             aria-modal="true"
             aria-labelledby="edit-item-title"
           >
-            <h3 id="edit-item-title" className="grocery-modal__title">Edit item</h3>
-            <p className="grocery-modal__hint">Update shopping details or remove this item.</p>
+            <h3 id="edit-item-title" className="grocery-modal__title">
+              Edit item
+            </h3>
+            <p className="grocery-modal__hint">
+              Update shopping details or remove this item.
+            </p>
 
             <form className="grocery-modal__form" onSubmit={handleSaveItem}>
               <label className="grocery-modal__field">
@@ -760,9 +848,15 @@ function GroceryList() {
                 </label>
               </div>
 
-              {itemError && <p className="grocery-message grocery-message--error">{itemError}</p>}
+              {itemError && (
+                <p className="grocery-message grocery-message--error">
+                  {itemError}
+                </p>
+              )}
               {confirmItemDelete && (
-                <p className="grocery-confirm-text">Click “Confirm delete” to remove this item.</p>
+                <p className="grocery-confirm-text">
+                  Click “Confirm delete” to remove this item.
+                </p>
               )}
 
               <div className="grocery-modal__actions grocery-modal__actions--split">
@@ -812,7 +906,6 @@ function GroceryList() {
           }}
         />
       )}
-
     </section>
   );
 }

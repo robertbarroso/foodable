@@ -4,11 +4,11 @@ import FeedItem from "../components/FeedItem.jsx";
 import SocialSearch from "../components/SocialSearch.jsx";
 import { selectUser } from "../auth/UserContext.jsx";
 import LikeButton from "../components/LikeButton.jsx";
+import ProfileModal from "../components/ProfileModal.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
 
 function toPostFeedItem(post) {
-  console.log(post);
   const postUsername = post.profiles.username;
   const postLikes = post.likes;
   let postKind = "";
@@ -47,6 +47,7 @@ export default function SocialFeed() {
   const [loading, setLoading] = useState(true);
   const [actionError, setActionError] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const [showProfile, setShowProfile] = useState(false);
 
   const { currentUser } = selectUser();
   async function loadCommunity() {
@@ -159,8 +160,6 @@ export default function SocialFeed() {
     if (data.copiedList) {
       toast.success(`Saved "${data.copiedList.title}" to your groceries`);
     }
-
-    console.log(data);
   }
 
   return (
@@ -168,9 +167,21 @@ export default function SocialFeed() {
       <section id="post-list">
         <div className="community-header">
           <h3 className="community-title">Feed</h3>
+          <button
+            className="profile-button"
+            onClick={() => setShowProfile(true)}
+          >
+            View Profile
+          </button>
 
           <SocialSearch searchText={searchText} setSearchText={setSearchText} />
         </div>
+        {showProfile && (
+          <ProfileModal
+            onClose={() => setShowProfile(false)}
+            setSelectedItem={setSelectedItem}
+          />
+        )}
 
         <div>
           {loading && <p className="community-message">Loading posts...</p>}
