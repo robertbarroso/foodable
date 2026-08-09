@@ -1,4 +1,5 @@
 import useRecipeForm from "../hooks/useRecipeForm";
+import toast from "react-hot-toast";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
 
@@ -48,6 +49,7 @@ export default function AddRecipe({recipeList, setRecipeList, setIsOpen}) {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("supabase_access_token")}`
                 },
                 body: JSON.stringify(recipe)
             })
@@ -58,8 +60,11 @@ export default function AddRecipe({recipeList, setRecipeList, setIsOpen}) {
             setRecipeList([...recipeList, data])
             setIsOpen(false)
             resetForm()
+
+            toast.success("Recipe successfully created!");
         } catch (error) {
             console.error(error)
+            toast.error("Something went wrong... Please try again.");
         }
     }
 
