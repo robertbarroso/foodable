@@ -1,6 +1,10 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { sendChatMessage } from "../services/chatService.js";
+import {
+  createGroceryList,
+  createGroceryListItem,
+} from "../services/groceryLists.js";
 import "./AICreationModal.css";
 
 const API_URL =
@@ -14,6 +18,10 @@ function AICreationModal({ mode, onClose, onCreated }) {
 
   // --- AI RECIPE SAVE INTEGRATION ---
   const [recipeData, setRecipeData] = useState(null);
+
+  // --- AI GROCERY SAVE INTEGRATION ---
+  const [groceryData, setGroceryData] = useState(null);
+
   const [isSaving, setIsSaving] = useState(false);
 
   const isRecipeMode = mode === "recipe";
@@ -30,6 +38,7 @@ function AICreationModal({ mode, onClose, onCreated }) {
     setError("");
     setResult("");
     setRecipeData(null);
+    setGroceryData(null);
     setIsGenerating(true);
 
     const creationPrompt = isRecipeMode
@@ -66,24 +75,48 @@ Use exactly this structure:
 Use numbers for calories, protein, carbs, fat, ingredient_cost, and ingredient costs.
 Estimate nutrition and ingredient costs when necessary.
 `
-      : `Create a complete grocery list based on this request: ${prompt}`;
+      : `
+Create a complete grocery list based on this request: ${prompt}
+
+Return ONLY valid JSON.
+Do not include markdown, code fences, or any text outside the JSON.
+
+Use exactly this structure:
+
+{
+  "title": "Grocery list title",
+  "budget_estimate": 0,
+  "is_public": false,
+  "items": [
+    {
+      "name": "Item name",
+      "quantity": "Amount",
+      "category": "Category",
+      "price": 0
+    }
+  ]
+}
+
+Use numbers for budget_estimate and item prices.
+Estimate prices when necessary.
+`;
 
     try {
       const response = await sendChatMessage(creationPrompt);
 
+      const cleanedResponse = response.reply
+        .replace(/```json/gi, "")
+        .replace(/```/g, "")
+        .trim();
+
       if (isRecipeMode) {
         // --- AI RECIPE SAVE INTEGRATION ---
-        const cleanedResponse = response.reply
-          .replace(/```json/gi, "")
-          .replace(/```/g, "")
-          .trim();
-
         const parsedRecipe = JSON.parse(cleanedResponse);
-
         setRecipeData(parsedRecipe);
       } else {
-        // --- EXISTING GROCERY LIST BEHAVIOR ---
-        setResult(response.reply);
+        // --- AI GROCERY SAVE INTEGRATION ---
+        const parsedGroceryList = JSON.parse(cleanedResponse);
+        setGroceryData(parsedGroceryList);
       }
     } catch (requestError) {
       console.error("AI creation error:", requestError);
@@ -144,13 +177,47 @@ Estimate nutrition and ingredient costs when necessary.
       return;
     }
 
-    // --- EXISTING GROCERY LIST BEHAVIOR ---
-    onCreated?.(result);
+    // --- AI GROCERY SAVE INTEGRATION ---
+    if (!groceryData || isSaving) {
+      return;
+    }
+
+    setIsSaving(true);
+    setError("");
+
+    try {
+      const createdList = await createGroceryList({
+        title: groceryData.title,
+        budget_estimate: groceryData.budget_estimate ?? null,
+        is_public: groceryData.is_public ?? false,
+      });
+
+      for (const item of groceryData.items ?? []) {
+        await createGroceryListItem(createdList.id, {
+          name: item.name,
+          quantity: item.quantity ?? null,
+          category: item.category ?? null,
+          price: item.price ?? null,
+        });
+      }
+
+      onCreated?.(createdList);
+    } catch (saveError) {
+      console.error("Grocery save error:", saveError);
+
+      setError(
+        saveError.message ||
+          "Foodable could not save the grocery list.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   function handleTryAgain() {
     setResult("");
     setRecipeData(null);
+    setGroceryData(null);
     setError("");
   }
 
@@ -256,17 +323,43 @@ Estimate nutrition and ingredient costs when necessary.
           </div>
         )}
 
-        {/* --- EXISTING GROCERY LIST PREVIEW --- */}
-        {!isRecipeMode && result && (
+        {/* --- AI GROCERY LIST PREVIEW --- */}
+        {!isRecipeMode && groceryData && (
           <div className="ai-creation-result">
-            <ReactMarkdown>{result}</ReactMarkdown>
+            <h2>{groceryData.title}</h2>
+
+            <p>
+              Estimated budget: $
+              {Number(groceryData.budget_estimate || 0).toFixed(2)}
+            </p>
+
+            <h3>Items</h3>
+            <ul>
+              {groceryData.items?.map((item, index) => (
+                <li key={index}>
+                  {item.quantity && `${item.quantity} `}
+                  {item.name}
+                  {item.category && ` (${item.category})`}
+                  {item.price != null &&
+                    ` - $${Number(item.price).toFixed(2)}`}
+                </li>
+              ))}
+            </ul>
 
             <div className="ai-modal-actions">
-              <button type="button" onClick={handleSave}>
-                Save Grocery List
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isSaving}
+              >
+                {isSaving ? "Saving..." : "Save Grocery List"}
               </button>
 
-              <button type="button" onClick={handleTryAgain}>
+              <button
+                type="button"
+                onClick={handleTryAgain}
+                disabled={isSaving}
+              >
                 Try Again
               </button>
             </div>
