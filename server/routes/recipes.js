@@ -1,13 +1,13 @@
 import express from "express";
 import supabase from "../supabase.js";
-import fakeAuth from "../utils/fakeAuth.js";
+import requireAuth from "../middleware/requireAuth.js";
 
 const recipesRouter = express.Router();
 
 // Get all recipes from a user
-recipesRouter.get("/", fakeAuth, async (req, res) => {
-  try {
-    const userId = req.user.id;
+recipesRouter.get("/", requireAuth, async (req, res) => {
+    try {
+        const userId = req.user.id;
 
     const { data, error } = await supabase
       .from("recipes")
@@ -29,9 +29,11 @@ recipesRouter.get("/", fakeAuth, async (req, res) => {
 });
 
 // Add a recipe for a user's account
-recipesRouter.post("/", fakeAuth, async (req, res) => {
-  try {
-    const userId = req.user.id;
+recipesRouter.post("/", requireAuth, async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        console.log(userId)
 
     const {
       title,
@@ -80,10 +82,10 @@ recipesRouter.post("/", fakeAuth, async (req, res) => {
 });
 
 // updates a user's recipe
-recipesRouter.patch("/:id", fakeAuth, async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const recipeId = req.params.id;
+recipesRouter.patch("/:id", requireAuth, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const recipeId = req.params.id;
 
     const {
       title,
@@ -137,10 +139,10 @@ recipesRouter.patch("/:id", fakeAuth, async (req, res) => {
 });
 
 // Delete a user's recipe
-recipesRouter.delete("/:id", fakeAuth, async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const recipeId = req.params.id;
+recipesRouter.delete("/:id", requireAuth, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const recipeId = req.params.id;
 
     const { error } = await supabase
       .from("recipes")
