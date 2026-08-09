@@ -7,7 +7,6 @@ const router = express.Router();
 
 // GET: All current social posts
 router.get("/", async (req, res) => {
-  console.log("🔥 SOCIAL POSTS GET ROUTE HIT");
   try {
     const { data, error } = await supabaseService
       .from("posts")

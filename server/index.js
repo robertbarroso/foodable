@@ -10,6 +10,8 @@ import socialPostsRouter from "./routes/social-posts.js";
 import discoveryRouter from "./routes/discovery.js";
 import chatRouter from "./routes/chat.js";
 import testPostRouter from "./routes/test-post.js";
+import followRouter from "./routes/follow-user.js";
+// import profileRouter from "./routes/profile-viewer.js";
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -27,6 +29,8 @@ app.use("/api/groceries", groceriesRouter);
 app.use("/api/social-posts", socialPostsRouter);
 app.use("/api/discovery", discoveryRouter);
 app.use("/api/chat", chatRouter);
+app.use("/api/follow", followRouter);
+// app.use("/api/profile", profileRouter);
 
 // Tests
 app.use("/test/test_post", testPostRouter);

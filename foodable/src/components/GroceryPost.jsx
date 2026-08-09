@@ -5,6 +5,7 @@ export default function GroceryPost({ grocery_post }) {
     console.error("ERROR: No grocery post has been found!", grocery_post);
     return <p>No grocery post received.</p>;
   }
+
   const groceryCreated = new Date(grocery_post.created_date).toLocaleDateString(
     "en-US",
     {
@@ -13,6 +14,7 @@ export default function GroceryPost({ grocery_post }) {
       year: "numeric",
     },
   );
+
   return (
     <>
       <article className="grocery-post-header">
@@ -20,7 +22,7 @@ export default function GroceryPost({ grocery_post }) {
         <div className="post-information-full">
           <p className="post-information-content">
             Created by <b>{grocery_post.profiles.username}</b>
-            <FollowButton />
+            <FollowButton followed_user_id={grocery_post.user_id} />
           </p>
           <p className="post-information-content">
             Posted on <b>{groceryCreated}</b>
@@ -34,13 +36,17 @@ export default function GroceryPost({ grocery_post }) {
                 <div className="grocery-content label-text-title">
                   {item.name}
                 </div>
-                <div className="grocery-quantity info-design">
-                  {item.quantity}
-                </div>
-                <div className="grocery-price info-design">
-                  ${item.price.toFixed(2)}
-                </div>
-                <div className="info-design">{item.category}</div>
+                {item.quantity !== null && (
+                  <div className="info-design">{item.quantity}</div>
+                )}
+                {item.price !== null && (
+                  <div className="grocery-price info-design">
+                    ${item.price.toFixed(2)}
+                  </div>
+                )}
+                {item.category !== null && (
+                  <div className="info-design">{item.category}</div>
+                )}
               </div>
             ))}
           </div>

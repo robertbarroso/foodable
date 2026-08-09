@@ -60,7 +60,7 @@ export default function RecipePost({ recipe_post }) {
         <section className="post-information-full">
           <p className="post-information-content post-username">
             Created by <b>{recipe_post.profiles.username}</b>
-            <FollowButton />
+            <FollowButton followed_user_id={recipe_post.profiles.id} />
           </p>
           <p className="post-information-content">
             Posted on <b>{recipeCreated}</b>
