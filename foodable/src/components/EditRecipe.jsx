@@ -70,7 +70,7 @@ export default function EditRecipe({recipe, recipeList, setRecipeList, setIsOpen
             );
             setIsOpen(false)
 
-            toast.success("Recipe updated successfully!");
+            toast.success("Recipe successfully updated!");
         } catch (error) {
             console.error(error)
 
