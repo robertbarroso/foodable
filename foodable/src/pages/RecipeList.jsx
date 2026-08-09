@@ -44,7 +44,9 @@ export default function Recipe() {
       }}>Recipes</h1>
 
        {!isLoading && (
+        
         <button
+          className="recipe-ai-button"
           type="button"
           onClick={() => setShowAICreation(true)}
         >
@@ -54,7 +56,7 @@ export default function Recipe() {
 
       {isLoading && <h1>Loading...</h1>}
       {!isLoading && <>
-        <button onClick={() => setIsOpen(true)}>Add New Recipe +</button>
+        <button className="recipe-add-button" onClick={() => setIsOpen(true)}>Add New Recipe +</button>
         <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
           <AddRecipe recipeList={recipeList} setRecipeList={setRecipeList} setIsOpen={setIsOpen} />
         </Modal>

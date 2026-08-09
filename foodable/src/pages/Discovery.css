@@ -1,23 +1,97 @@
 .discovery-container {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 3rem 1.5rem 4rem;
 }
 
 .search-input {
-  width: 250px;
-  padding: 8px;
-  margin-right: 10px;
+  width: 320px;
+  padding: 0.95rem 1rem;
+  margin-right: 0.75rem;
+  border: 1px solid #ced8d1;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #202a24;
+  background: #ffffff;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: #9aa39d;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #079a70;
+  box-shadow: 0 0 0 4px rgba(7, 154, 112, 0.12);
 }
 
 .search-button {
-  padding: 8px 16px;
+  padding: 0.95rem 1.35rem;
+  border: none;
+  border-radius: 12px;
+  background: #079a70;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.search-button:hover:not(:disabled) {
+  background: #078763;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(7, 154, 112, 0.18);
+}
+
+.search-button:disabled {
+  background: #b6c2ba;
+  cursor: not-allowed;
 }
 
 .store-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 16px;
-  background: white;
+  border: 1px solid #e2e8e4;
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(36, 73, 51, 0.05);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.store-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbdcd1;
+  box-shadow: 0 10px 24px rgba(36, 73, 51, 0.08);
+}
+
+.store-card h2 {
+  margin: 0 0 0.6rem;
+  color: #26362d;
+}
+
+.store-card p {
+  margin: 0.3rem 0;
+  color: #667085;
+  line-height: 1.5;
+}
+
+.store-card a {
+  display: inline-block;
+  margin-top: 0.75rem;
+  color: #047857;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.store-card a:hover {
+  text-decoration: underline;
 }

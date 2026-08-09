@@ -406,7 +406,7 @@ function GroceryList() {
           {/* --- AI GROCERY LIST INTEGRATION --- */}
           <button
             type="button"
-            className="grocery-button grocery-button--primary grocery-button--compact"
+            className="grocery-button grocery-button--primary"
             onClick={() => setShowAICreation(true)}
           >
             Create with AI
@@ -414,7 +414,7 @@ function GroceryList() {
 
           <button
             type="button"
-            className="grocery-button grocery-button--primary grocery-button--compact"
+            className="grocery-button"
             onClick={() => setIsCreating(true)}
           >
             + New
