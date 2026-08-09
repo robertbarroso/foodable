@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import FeedItem from "../components/FeedItem.jsx";
 import SocialSearch from "../components/SocialSearch.jsx";
 import { selectUser } from "../auth/UserContext.jsx";
+import LikeButton from "../components/LikeButton.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
 
@@ -194,15 +195,13 @@ export default function SocialFeed() {
                       <p className="post-date-render">{item.created}</p>
                     </section>
                     <div className="pill-container">
-                      <button
-                        className="pill-render likes-render"
+                      <LikeButton
+                        likes={item.likes}
                         onClick={(event) => {
                           event.stopPropagation();
                           handleLike(item.original.post_id);
                         }}
-                      >
-                        ♥ {item.likes}
-                      </button>
+                      />
 
                       <p className="pill-render tag-render">
                         {item.kind === "recipe" ? "Recipe" : "Grocery"}
