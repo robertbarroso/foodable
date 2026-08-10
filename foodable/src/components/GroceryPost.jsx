@@ -35,7 +35,7 @@ export default function GroceryPost({ grocery_post }) {
             <button
               className="community-share-button"
               onClick={() => {
-                const shareUrl = `${window.location.origin}/post/${grocery_post.post_id}`;
+                const shareUrl = `${window.location.origin}/#/post/${grocery_post.post_id}`;
 
                 navigator.clipboard.writeText(shareUrl);
 

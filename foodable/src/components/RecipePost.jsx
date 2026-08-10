@@ -67,7 +67,7 @@ export default function RecipePost({ recipe_post }) {
             <button
               className="community-share-button"
               onClick={() => {
-                const shareUrl = `${window.location.origin}/post/${recipe_post.post_id}`;
+                const shareUrl = `${window.location.origin}/#/post/${recipe_post.post_id}`;
 
                 navigator.clipboard.writeText(shareUrl);
                 toast.success("Share link copied!");

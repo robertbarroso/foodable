@@ -37,7 +37,7 @@ export default function SharedPostPage() {
   }
 
   return (
-    <section className="content-container">
+    <section className="shared-post-container content-container">
       <FeedItem incoming_data={postData} />
     </section>
   );
