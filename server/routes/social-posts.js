@@ -222,4 +222,58 @@ router.post("/:post_id/like", requireAuth, async (req, res) => {
   }
 });
 
+// GET: To help create a shareable link
+router.get("/:post_id", async (req, res) => {
+  const { post_id } = req.params;
+
+  try {
+    const { data: post, error } = await supabaseService
+      .from("posts")
+      .select("*, profiles(username)")
+      .eq("post_id", post_id)
+      .single();
+
+    if (error) {
+      return res.status(404).json({
+        error: "Post not found",
+      });
+    }
+
+    if (post.recipe_list_id) {
+      const { data: recipeData } = await supabaseService
+        .from("recipes")
+        .select("*")
+        .eq("id", post.recipe_list_id)
+        .single();
+
+      post.recipe = recipeData;
+    }
+
+    if (post.grocery_list_id) {
+      const { data: groceryData } = await supabaseService
+        .from("grocery_lists")
+        .select("*")
+        .eq("id", post.grocery_list_id)
+        .single();
+
+      const { data: groceryItems } = await supabaseService
+        .from("grocery_list_items")
+        .select("*")
+        .eq("list_id", post.grocery_list_id);
+
+      groceryData.items = groceryItems;
+      post.grocery = groceryData;
+    }
+
+    return res.status(200).json(post);
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      error: "Server error",
+    });
+  }
+});
+``;
+
 export default router;

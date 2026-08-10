@@ -1,6 +1,7 @@
 import FollowButton from "./FollowButton";
 import { selectUser } from "../auth/UserContext.jsx";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function RecipePost({ recipe_post }) {
   const [actionError, setActionError] = useState(null);
@@ -63,6 +64,16 @@ export default function RecipePost({ recipe_post }) {
               current_user_id={currentUser?.id}
               followed_user_id={recipe_post.user_id}
             />
+            <button
+              onClick={() => {
+                const shareUrl = `${window.location.origin}/post/${recipe_post.post_id}`;
+
+                navigator.clipboard.writeText(shareUrl);
+                toast.success("Share link copied!");
+              }}
+            >
+              Share
+            </button>
           </p>
           <p className="post-information-content">
             Posted on <b>{recipeCreated}</b>

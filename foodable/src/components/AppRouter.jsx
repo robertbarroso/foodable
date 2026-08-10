@@ -7,6 +7,7 @@ import GroceryList from "../pages/GroceryList.jsx";
 import SocialFeed from "../pages/SocialFeed.jsx";
 import Discovery from "../pages/Discovery";
 import UserAuth from "../pages/UserAuth.jsx";
+import SharedPost from "../pages/SharedPost.jsx";
 
 export default function AppRouter() {
   return (
@@ -20,6 +21,7 @@ export default function AppRouter() {
         <Route path="/community" element={<SocialFeed />} />
         <Route path="/discovery" element={<Discovery />} />
         <Route path="user-auth" element={<UserAuth />} />
+        <Route path="/post/:postId" element={<SharedPost />} />
       </Routes>
     </BrowserRouter>
   );
