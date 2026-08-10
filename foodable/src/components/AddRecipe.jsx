@@ -55,9 +55,8 @@ export default function AddRecipe({recipeList, setRecipeList, setIsOpen}) {
             })
 
             const data = await response.json()
-            console.log(data);
 
-            setRecipeList([...recipeList, data])
+            setRecipeList([...recipeList, data.recipe])
             setIsOpen(false)
             resetForm()
 

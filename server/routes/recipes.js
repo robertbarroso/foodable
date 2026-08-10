@@ -30,10 +30,10 @@ recipesRouter.get("/", requireAuth, async (req, res) => {
 
 // Add a recipe for a user's account
 recipesRouter.post("/", requireAuth, async (req, res) => {
-    try {
-        const userId = req.user.id;
+  try {
+    const userId = req.user.id;
 
-        console.log(userId)
+    console.log(userId)
 
     const {
       title,
@@ -48,7 +48,7 @@ recipesRouter.post("/", requireAuth, async (req, res) => {
       is_public,
     } = req.body;
 
-    const { data, error } = await supabase
+    const { data: recipeData, error: recipeError } = await supabase
       .from("recipes")
       .insert([
         {
@@ -65,15 +65,46 @@ recipesRouter.post("/", requireAuth, async (req, res) => {
           is_public,
         },
       ])
-      .select();
+      .select()
+      .single();
 
-    if (error) {
+    if (recipeError) {
       return res.status(400).json({
-        error: error.message,
+        error: recipeError.message,
       });
     }
 
-    res.status(201).json(data[0]);
+    // Create post if recipe is public
+    if (is_public === true) {
+      const { data: postData, error: postError } = await supabase
+        .from("posts")
+        .insert([
+          {
+            user_id: userId,
+            post_type: 1,
+            likes: 0,
+            recipe_list_id: recipeData.id,
+          }
+        ])
+        .select()
+        .single();
+        
+      if (postError) {
+        return res.status(400).json({
+          error: postError.message,
+        });
+      }
+
+      return res.status(201).json({
+        recipe: recipeData,
+        post: postData
+      })
+    }
+
+    // Private recipe
+    return res.status(201).json({
+      recipe: recipeData,
+    });
   } catch (error) {
     res.status(500).json({
       error: "Server error",
@@ -83,9 +114,9 @@ recipesRouter.post("/", requireAuth, async (req, res) => {
 
 // updates a user's recipe
 recipesRouter.patch("/:id", requireAuth, async (req, res) => {
-    try {
-        const userId = req.user.id;
-        const recipeId = req.params.id;
+  try {
+    const userId = req.user.id;
+    const recipeId = req.params.id;
 
     const {
       title,
@@ -116,7 +147,7 @@ recipesRouter.patch("/:id", requireAuth, async (req, res) => {
       })
       .eq("id", recipeId)
       .eq("user_id", userId)
-      .select();
+      .select()
 
     if (error) {
       return res.status(400).json({
@@ -129,6 +160,52 @@ recipesRouter.patch("/:id", requireAuth, async (req, res) => {
         error: "Recipe not found",
       });
     }
+
+    console.log(data[0])
+
+    if (data[0].is_public === true) {
+      const { data: existingPostData, error: existingPostError } = await supabase
+        .from("posts")
+        .select("post_id")
+        .eq("recipe_list_id", recipeId)
+        .eq("user_id", userId)
+
+        if (existingPostError) {
+          return res.status(400).json({
+            error: existingPostError.message
+          })
+        }
+
+        // No post exists, create a new post
+        if (existingPostData.length === 0) {
+          const { data: postData, error: postError } = await supabase
+            .from("posts")
+            .insert({
+              user_id: userId,
+              post_type: 1,
+              likes: 0,
+              recipe_list_id: recipeId
+            })
+
+          if (postError) {
+            return res.status(400).json({
+              error: postError.message
+            })
+          }
+        }
+      } else {
+        const { error: postError } = await supabase
+          .from("posts")
+          .delete()
+          .eq("recipe_list_id", recipeId)
+          .eq("user_id", userId)
+
+        if (postError) {
+          return res.status(400).json({
+            error: postError.message
+          })
+        }
+      }
 
     res.status(200).json(data[0]);
   } catch (error) {
@@ -144,15 +221,29 @@ recipesRouter.delete("/:id", requireAuth, async (req, res) => {
         const userId = req.user.id;
         const recipeId = req.params.id;
 
-    const { error } = await supabase
+    // Delete post first if it exists
+    const { error: postError } = await supabase
+      .from("posts")
+      .delete()
+      .eq("recipe_list_id", recipeId)
+      .eq("user_id", userId)
+
+    if (postError) {
+      return res.status(400).json({
+        error: postError.message
+      })
+    }
+
+    // Then delete the recipe after
+    const { error: recipeError } = await supabase
       .from("recipes")
       .delete()
       .eq("id", recipeId)
       .eq("user_id", userId);
 
-    if (error) {
+    if (recipeError) {
       return res.status(400).json({
-        error: error.message,
+        recipeError: error.message,
       });
     }
 

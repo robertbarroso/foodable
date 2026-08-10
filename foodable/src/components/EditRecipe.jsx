@@ -56,12 +56,12 @@ export default function EditRecipe({recipe, recipeList, setRecipeList, setIsOpen
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("supabase_access_token")}`
                 },
                 body: JSON.stringify(editedRecipe)
             })
 
             const data = await response.json()
-            console.log(data);
 
             setRecipeList((prevRecipes) =>
                 prevRecipes.map((recipe) =>
