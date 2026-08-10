@@ -113,6 +113,43 @@ router.get("/me", requireAuth, async (req, res) => {
   }
 });
 
+// GET: Retrieve all of the followers that the user (signed in) has
+router.get("/:user_id/following", requireAuth, async (req, res) => {
+  const user_id = req.params.user_id;
+
+  try {
+    const { data: userFollowers, error: userFollowersError } =
+      await supabaseService
+        .from("follow")
+        .select(
+          `
+        followed_id,
+        profiles!follow_followed_id_fkey (
+          id,
+          username
+        )
+      `,
+        )
+        .eq("user_id", user_id);
+
+    if (userFollowersError) {
+      return res.status(400).json({
+        error: userFollowersError.message,
+      });
+    }
+
+    console.log("FOLLOWING:", userFollowers);
+
+    return res.status(200).json(userFollowers);
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      error: "Failed to load following list",
+    });
+  }
+});
+
 // GET: Retrieve all of the information about the PROFILE of the user we wish to see (that is not the signed in user).
 
 router.get("/:user_id", requireAuth, async (req, res) => {
@@ -169,6 +206,7 @@ router.get("/:user_id", requireAuth, async (req, res) => {
       .select(
         `
       *,
+      profiles(*),
       recipes(*),
       grocery_lists(*)
     `,
