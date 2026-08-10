@@ -1,6 +1,7 @@
 // src/services/chatService.js
 
-const AI_SERVICE_URL = "http://localhost:5001/api";
+const AI_SERVICE_URL =
+  import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
 
 export async function sendChatMessage(message) {
   try {
@@ -32,11 +33,9 @@ export async function sendChatMessage(message) {
   }
 }
 
-//  Load previous chat history
+// Load previous chat history
 export async function getChatHistory() {
-  const response = await fetch(
-    "http://localhost:5001/api/chat/history",
-  );
+  const response = await fetch(`${AI_SERVICE_URL}/chat/history`);
 
   const data = await response.json();
 
@@ -49,7 +48,7 @@ export async function getChatHistory() {
   return data.messages;
 }
 
-//  Delete chat history
+// Delete chat history
 export async function clearChatHistory() {
   const response = await fetch(`${AI_SERVICE_URL}/chat/history`, {
     method: "DELETE",
