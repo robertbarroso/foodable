@@ -33,6 +33,7 @@ export default function GroceryPost({ grocery_post }) {
               followed_user_id={grocery_post.user_id}
             />
             <button
+              className="community-share-button"
               onClick={() => {
                 const shareUrl = `${window.location.origin}/post/${grocery_post.post_id}`;
 
