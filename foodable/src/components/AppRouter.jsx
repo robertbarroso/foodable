@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import { HashRouter, Navigate, Routes, Route } from "react-router-dom";
 import Home from "../pages/Home.jsx";
 import NavBar from "./NavBar.jsx";
 import AIChatbot from "../pages/AIChatbot.jsx";
@@ -10,7 +10,7 @@ import UserAuth from "../pages/UserAuth.jsx";
 
 export default function AppRouter() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -21,6 +21,6 @@ export default function AppRouter() {
         <Route path="/discovery" element={<Discovery />} />
         <Route path="user-auth" element={<UserAuth />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
