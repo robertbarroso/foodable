@@ -1,6 +1,6 @@
 import FollowButton from "./FollowButton";
 import { selectUser } from "../auth/UserContext.jsx";
-import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function GroceryPost({ grocery_post }) {
   console.log("GROCERY OBJECT:", grocery_post.grocery);
@@ -31,7 +31,18 @@ export default function GroceryPost({ grocery_post }) {
             <FollowButton
               current_user_id={currentUser?.id}
               followed_user_id={grocery_post.user_id}
-            />{" "}
+            />
+            <button
+              onClick={() => {
+                const shareUrl = `${window.location.origin}/post/${grocery_post.post_id}`;
+
+                navigator.clipboard.writeText(shareUrl);
+
+                toast.success("Share link copied!");
+              }}
+            >
+              Share
+            </button>
           </p>
           <p className="post-information-content">
             Posted on <b>{groceryCreated}</b>
