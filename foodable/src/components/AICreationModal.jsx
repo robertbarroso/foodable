@@ -147,6 +147,7 @@ Estimate prices when necessary.
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("supabase_access_token")}`
           },
           body: JSON.stringify(recipeData),
         });
