@@ -53,7 +53,7 @@ Add the server configuration to `server/.env`:
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_KEY=your-service-role-key
 GEOAPIFY_API_KEY=your-geoapify-api-key
-NVIDIA_MODEL=meta/llama-3.1-8b-instruct
+NVIDIA_MODEL=mistralai/mistral-nemotron
 NVIDIA_API_KEY=your-nvidia-api-key
 PORT=5001
 USE_MOCK_AI=false
