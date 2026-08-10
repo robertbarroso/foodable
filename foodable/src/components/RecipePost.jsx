@@ -65,6 +65,7 @@ export default function RecipePost({ recipe_post }) {
               followed_user_id={recipe_post.user_id}
             />
             <button
+              className="community-share-button"
               onClick={() => {
                 const shareUrl = `${window.location.origin}/post/${recipe_post.post_id}`;
 

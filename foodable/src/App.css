@@ -1230,3 +1230,130 @@ a.active#nav-bar-design {
 .profile-columns section {
   flex: 1;
 }
+
+.profile-close-button {
+  padding: 0.5rem 0.7rem;
+  background: #ffffff;
+  color: #37443c;
+  border: 1px solid #d6ddd8;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-close-button:hover {
+  background: #f4f9f6;
+  border-color: #9fcbb0;
+  color: #047857;
+}
+
+.profile-username {
+  color: #1f2933;
+  font-family: inherit;
+}
+
+.profile-following-button,
+.following-user-button,
+.profile-post-button {
+  padding: 0.55rem 0.85rem;
+  background: #ffffff;
+  color: #37443c;
+  border: 1px solid #d6ddd8;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.profile-following-button:hover,
+.following-user-button:hover,
+.profile-post-button:hover {
+  background: #f4f9f6;
+  border-color: #9fcbb0;
+  color: #047857;
+  transform: translateY(-1px);
+}
+
+.community-follow-button {
+  padding: 8px 16px;
+  margin-left: 8px;
+
+  border: 1px solid #2f9e73;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #16805d;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.community-follow-button:hover {
+  background: #ecfdf5;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(36, 73, 51, 0.08);
+}
+
+.community-share-button {
+  padding: 8px 14px;
+  border: 1px solid #d6ddd8;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #37443c;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.community-share-button:hover {
+  background: #f4f9f6;
+  border-color: #9fcbb0;
+  color: #047857;
+  transform: translateY(-1px);
+}
+
+.profile-button {
+  padding: 8px 16px;
+  border: 1px solid #2f9e73;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #16805d;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.profile-button:hover {
+  background: #ecfdf5;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(36, 73, 51, 0.08);
+}
+
+.profile-button:active {
+  transform: translateY(0);
+}

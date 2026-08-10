@@ -54,10 +54,10 @@ export default function ProfileModal({ onClose, setSelectedItem }) {
   return (
     <div className="profile-modal">
       <div className="profile-card">
-        <button onClick={onClose}>X</button>
-        <h2>{profileData.profile.username}</h2>
-        <p>Followers: {profileData.followers}</p>
-        <button onClick={loadFollowing}>
+        <button className="profile-close-button" onClick={onClose}>X</button>
+        <h2 className="profile-username">{profileData.profile.username}</h2>
+        <p className="profile-followers">Followers: {profileData.followers}</p>
+        <button className="profile-following-button" onClick={loadFollowing}>
           Following: {profileData.following}
         </button>
         {showFollowing && (
@@ -87,6 +87,7 @@ export default function ProfileModal({ onClose, setSelectedItem }) {
             {profileData.recipePosts.map((post) => (
               <button
                 key={post.post_id}
+                className="profile-post-button"
                 onClick={() => {
                   setSelectedItem(post);
                   onClose();
@@ -104,6 +105,7 @@ export default function ProfileModal({ onClose, setSelectedItem }) {
             {profileData.groceryPosts.map((post) => (
               <button
                 key={post.post_id}
+                className="profile-post-button"
                 onClick={() => {
                   console.log("PROFILE CLICK:", post);
                   setSelectedItem(post);

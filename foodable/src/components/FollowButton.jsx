@@ -101,7 +101,7 @@ export default function FollowButton({ current_user_id, followed_user_id }) {
   }
   return (
     <>
-      <button onClick={handleFollow}>
+      <button className="community-follow-button" onClick={handleFollow}>
         {isFollowing ? "Following" : "Follow"}
       </button>
     </>
