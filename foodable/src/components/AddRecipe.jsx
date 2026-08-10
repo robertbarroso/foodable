@@ -31,6 +31,8 @@ export default function AddRecipe({recipeList, setRecipeList, setIsOpen}) {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
+        const toastId = toast.loading("Adding Recipe...")
+
         try {
             const recipe = {
                 title,
@@ -60,10 +62,10 @@ export default function AddRecipe({recipeList, setRecipeList, setIsOpen}) {
             setIsOpen(false)
             resetForm()
 
-            toast.success("Recipe successfully created!");
+            toast.success("Recipe successfully created!", {id: toastId});
         } catch (error) {
             console.error(error)
-            toast.error("Something went wrong... Please try again.");
+            toast.error("Something went wrong... Please try again.", {id: toastId});
         }
     }
 

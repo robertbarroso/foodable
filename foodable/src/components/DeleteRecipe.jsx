@@ -5,7 +5,10 @@ const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
 export default function DeleteRecipe({id, recipeList, setRecipeList}) {
 
     const handleDelete = async (id) => {
+        const toastId = toast.loading("Deleting recipe...")
+
         try {
+
             const response = await fetch(`${API_URL}/recipes/${id}`,
                 {
                     method: "DELETE",
@@ -19,12 +22,12 @@ export default function DeleteRecipe({id, recipeList, setRecipeList}) {
 
             if (response.ok) {
                 setRecipeList(recipeList.filter((recipe) => recipe.id !== id))
-                toast.success("Recipe successfully deleted!");
+                toast.success("Recipe successfully deleted!", {id: toastId});
             }
 
         } catch (error) {
             console.error(error)
-            toast.error("Something went wrong... Please try again.");
+            toast.error("Something went wrong... Please try again.", {id: toastId});
         }
     }
 
