@@ -6,6 +6,7 @@ import {
   createGroceryListItem,
 } from "../services/groceryLists.js";
 import "./AICreationModal.css";
+import toast from "react-hot-toast"
 
 const API_URL =
   import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
@@ -141,6 +142,7 @@ Estimate prices when necessary.
 
       setIsSaving(true);
       setError("");
+      const toastId = toast.loading("Adding Recipe...")
 
       try {
         const response = await fetch(`${API_URL}/recipes`, {
@@ -163,6 +165,7 @@ Estimate prices when necessary.
         }
 
         const savedRecipe = await response.json();
+        toast.success("Recipe successfully created!", {id: toastId});
 
         onCreated?.(savedRecipe.recipe);
       } catch (saveError) {
@@ -171,6 +174,7 @@ Estimate prices when necessary.
         setError(
           saveError.message || "Foodable could not save the recipe.",
         );
+        toast.error("Something went wrong... Please try again.", {id: toastId});
       } finally {
         setIsSaving(false);
       }

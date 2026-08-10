@@ -38,6 +38,8 @@ export default function EditRecipe({recipe, recipeList, setRecipeList, setIsOpen
     const handleSubmit = async (e) => {
         e.preventDefault()
 
+        const toastId = toast.loading("Updating recipe...")
+
         try {
             const editedRecipe = {
                 title,
@@ -70,11 +72,11 @@ export default function EditRecipe({recipe, recipeList, setRecipeList, setIsOpen
             );
             setIsOpen(false)
 
-            toast.success("Recipe successfully updated!");
+            toast.success("Recipe successfully updated!", {id: toastId});
         } catch (error) {
             console.error(error)
 
-            toast.error("Something went wrong... Please try again.");
+            toast.error("Something went wrong... Please try again.", {id: toastId});
         }
     }
 
