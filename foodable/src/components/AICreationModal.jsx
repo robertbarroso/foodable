@@ -164,7 +164,7 @@ Estimate prices when necessary.
 
         const savedRecipe = await response.json();
 
-        onCreated?.(savedRecipe);
+        onCreated?.(savedRecipe.recipe);
       } catch (saveError) {
         console.error("Recipe save error:", saveError);
 

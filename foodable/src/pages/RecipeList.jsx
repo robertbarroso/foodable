@@ -95,10 +95,6 @@ export default function Recipe() {
           </>
         }
       </>
-      {!isLoading && !recipeList.length && (
-        <h3 style={{textAlign: "center", width: "100%"}}>No recipes to display... Start by adding some!</h3>
-      )}
-
       <>
         {!isLoading && savedRecipeList.length > 0 && 
           <>
@@ -118,7 +114,7 @@ export default function Recipe() {
           </>
         }
       </>
-      {!isLoading && !recipeList.length && !savedRecipeList.length (
+      {!isLoading && !recipeList.length && !savedRecipeList.length && (
         <h3 style={{textAlign: "center", width: "100%"}}>No recipes to display... Start by adding some!</h3>
       )}
       
