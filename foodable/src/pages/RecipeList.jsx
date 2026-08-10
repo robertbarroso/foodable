@@ -9,6 +9,7 @@ const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5001/api";
 export default function Recipe() {
 
   const [recipeList, setRecipeList] = useState([]);
+  const [savedRecipeList, setSavedRecipeList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAICreation, setShowAICreation] = useState(false);
   const [isOpen, setIsOpen] = useState(false)
@@ -22,10 +23,20 @@ export default function Recipe() {
             "Authorization" : `Bearer ${localStorage.getItem("supabase_access_token")}`
           },
         })
-        const data = await response.json()
-        
-        console.log(data)
-        setRecipeList(data);
+        const userRecipes = await response.json()
+
+        const response2 = await fetch(`${API_URL}/recipes/saved`, {
+          method: "GET",
+          headers: {
+            "Authorization" : `Bearer ${localStorage.getItem("supabase_access_token")}`
+          },
+        })
+
+        const savedRecipes = await response2.json()
+        console.log("SAVED: ", savedRecipes)
+
+        setRecipeList(userRecipes);
+        setSavedRecipeList(savedRecipes);
         setIsLoading(false);
 
       } catch (error) {
@@ -78,13 +89,36 @@ export default function Recipe() {
               padding: "10px"
             }}>
               {recipeList.map((recipe) => (
-                <RecipeCard recipe={recipe} key={recipe.id} recipeList={recipeList} setRecipeList={setRecipeList}/>
+                <RecipeCard recipe={recipe} key={recipe.id} recipeList={recipeList} setRecipeList={setRecipeList} savedRecipeList={savedRecipeList} setSavedRecipeList={setSavedRecipeList} isUser={true} />
               ))}
             </div>
           </>
         }
       </>
       {!isLoading && !recipeList.length && (
+        <h3 style={{textAlign: "center", width: "100%"}}>No recipes to display... Start by adding some!</h3>
+      )}
+
+      <>
+        {!isLoading && savedRecipeList.length > 0 && 
+          <>
+            <h2 style={{textAlign: "center", width: "100%"}}>Saved Recipes</h2>
+            <div className="recipe-list"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "10px",
+              justifyContent: "center",
+              padding: "10px"
+            }}>
+              {savedRecipeList.map((item) => (
+                <RecipeCard recipe={item.posts.recipes} key={item.posts.recipes.id} recipeList={recipeList} setRecipeList={setRecipeList} savedRecipeList={savedRecipeList} setSavedRecipeList={setSavedRecipeList} isUser={false} postId={item.post_id}/>
+              ))}
+            </div>
+          </>
+        }
+      </>
+      {!isLoading && !recipeList.length && !savedRecipeList.length (
         <h3 style={{textAlign: "center", width: "100%"}}>No recipes to display... Start by adding some!</h3>
       )}
       
