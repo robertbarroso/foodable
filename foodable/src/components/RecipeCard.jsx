@@ -2,8 +2,9 @@ import { useState } from "react";
 import DeleteRecipe from "./DeleteRecipe";
 import Modal from "./Modal";
 import EditRecipe from "./EditRecipe";
+import DeleteSavedRecipe from "./DeleteSavedRecipe";
 
-export default function RecipeCard({ recipe, recipeList, setRecipeList }) {
+export default function RecipeCard({ recipe, recipeList, setRecipeList, savedRecipeList, setSavedRecipeList ,isUser, postId=null }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -50,22 +51,32 @@ export default function RecipeCard({ recipe, recipeList, setRecipeList }) {
         ))}
       </ol>
       <div className="recipe-card-actions">
-        <button className="recipe-edit-button" onClick={() => setIsOpen(true)}>
-          Edit Recipe
-        </button>
-        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-          <EditRecipe
-            recipe={recipe}
+        {isUser && <>
+          <button className="recipe-edit-button" onClick={() => setIsOpen(true)}>
+            Edit Recipe
+          </button>
+          <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+            <EditRecipe
+              recipe={recipe}
+              recipeList={recipeList}
+              setRecipeList={setRecipeList}
+              setIsOpen={setIsOpen}
+            />
+          </Modal>
+          <DeleteRecipe
+            id={recipe.id}
             recipeList={recipeList}
             setRecipeList={setRecipeList}
-            setIsOpen={setIsOpen}
           />
-        </Modal>
-        <DeleteRecipe
-          id={recipe.id}
-          recipeList={recipeList}
-          setRecipeList={setRecipeList}
-        />
+        </>}
+        {!isUser && 
+          <DeleteSavedRecipe 
+            id={recipe.id}
+            postId={postId}
+            savedRecipeList={savedRecipeList}
+            setSavedRecipeList={setSavedRecipeList}
+          />
+        }
       </div>
     </div>
   );

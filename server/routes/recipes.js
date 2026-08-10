@@ -7,7 +7,7 @@ const recipesRouter = express.Router();
 // Get all recipes from a user
 recipesRouter.get("/", requireAuth, async (req, res) => {
     try {
-        const userId = req.user.id;
+      const userId = req.user.id;
 
     const { data, error } = await supabase
       .from("recipes")
@@ -21,6 +21,37 @@ recipesRouter.get("/", requireAuth, async (req, res) => {
     }
 
     res.json(data);
+  } catch (error) {
+    res.status(500).json({
+      error: "Server error",
+    });
+  }
+});
+
+recipesRouter.get("/saved", requireAuth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const { data, error } = await supabase
+      .from("post_likes")
+      .select(`
+        post_id,
+        posts (
+          recipe_list_id,
+          recipes (*)
+        )
+      `)
+      .eq("user_id", userId);
+
+    if (error) {
+      return res.status(400).json({
+        error: error.message
+      });
+    }
+
+    const recipesWithPostId = data.filter((item) => item.posts.recipes != null)
+
+    res.json(recipesWithPostId);
   } catch (error) {
     res.status(500).json({
       error: "Server error",
@@ -161,8 +192,6 @@ recipesRouter.patch("/:id", requireAuth, async (req, res) => {
       });
     }
 
-    console.log(data[0])
-
     if (data[0].is_public === true) {
       const { data: existingPostData, error: existingPostError } = await supabase
         .from("posts")
@@ -256,5 +285,42 @@ recipesRouter.delete("/:id", requireAuth, async (req, res) => {
     });
   }
 });
+
+// Delete a user's saved recipe
+recipesRouter.delete("/saved/:postId", requireAuth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const postId = req.params.postId;
+
+    // Delete post likes first
+    const { error: postLikesError } = await supabase
+      .from("post_likes")
+      .delete()
+      .eq("post_id", postId)
+      .eq("user_id", userId)
+
+    if (postLikesError) {
+      return res.status(400).json({
+        error: postLikesError.message
+      })
+    }
+
+    const { error: decrementError } = await supabase.rpc(
+      "decrement_post_likes",
+      {
+        post_id_input: postId,
+      }
+    );
+
+    res.json({
+      message: "Recipe removed successfully.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Server error",
+    });
+  }
+});
+
 
 export default recipesRouter;
