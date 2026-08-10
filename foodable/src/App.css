@@ -1357,3 +1357,7 @@ a.active#nav-bar-design {
 .profile-button:active {
   transform: translateY(0);
 }
+
+.shared-post-container {
+  padding: 100px;
+}

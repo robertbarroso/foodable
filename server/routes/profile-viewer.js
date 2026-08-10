@@ -219,6 +219,18 @@ router.get("/:user_id", requireAuth, async (req, res) => {
       });
     }
 
+    // Hydrate grocery items
+    for (const post of publishedPosts) {
+      if (post.grocery_lists) {
+        const { data: groceryItems } = await supabaseService
+          .from("grocery_list_items")
+          .select("*")
+          .eq("list_id", post.grocery_lists.id);
+
+        post.grocery_lists.items = groceryItems;
+      }
+    }
+
     const recipePosts = publishedPosts
       .filter((post) => post.post_type === 1)
       .map((post) => ({
