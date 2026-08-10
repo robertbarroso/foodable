@@ -60,6 +60,8 @@ function SignUpForm() {
   const handleSignUp = async (event) => {
     event.preventDefault();
 
+    const toastId = toast.loading("Attempting to sign up...")
+
     // Username validation
     if (usernameSignUp.length < 6) {
       toast.error("Username must be at least 6 characters.");
@@ -92,20 +94,22 @@ function SignUpForm() {
       const signupData = await signupResponse.json();
 
       if (signupData.success) {
-        toast.success("Account created. Please sign in.");
+        toast.success("Account created. Please sign in.", {id: toastId});
         navigate("/");
         return;
       }
 
-      toast.error(signupData.message || "Sign up failed");
+      toast.error(signupData.message || "Sign up failed", {id: toastId});
     } catch (error) {
       console.error(error);
-      toast.error(error.message || "Sign up failed");
+      toast.error(error.message || "Sign up failed", {id: toastId});
     }
   };
 
   const handleSignIn = async (event) => {
     event.preventDefault();
+    
+    const toastId = toast.loading("Attempting to log in...")
 
     try {
       const signinForm = {
@@ -140,16 +144,16 @@ function SignUpForm() {
         );
 
         toast.success(
-          `Welcome back${signinData.profile?.first_name ? `, ${signinData.profile.first_name}` : ""}!`,
+          `Welcome back${signinData.profile?.first_name ? `, ${signinData.profile.first_name}` : ""}!`, {id: toastId}
         );
         navigate("/");
         return;
       }
 
-      toast.error(signinData.message || "Sign in failed");
+      toast.error(signinData.message || "Sign in failed", {id: toastId});
     } catch (error) {
       console.error(error);
-      toast.error(error.message || "Sign in failed");
+      toast.error(error.message || "Sign in failed", {id: toastId});
     }
   };
 
