@@ -61,7 +61,7 @@ function SignUpForm() {
     event.preventDefault();
 
     // Username validation
-    if (username.length < 6) {
+    if (usernameSignUp.length < 6) {
       toast.error("Username must be at least 6 characters.");
       return;
     }
