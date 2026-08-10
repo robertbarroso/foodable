@@ -7,7 +7,7 @@ import DeleteSavedRecipe from "./DeleteSavedRecipe";
 export default function RecipeCard({ recipe, recipeList, setRecipeList, savedRecipeList, setSavedRecipeList ,isUser, postId=null }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  return (
+  return (<>
     <div
       key={recipe.id}
       className="recipe-card"
@@ -23,6 +23,7 @@ export default function RecipeCard({ recipe, recipeList, setRecipeList, savedRec
       }}
     >
       <h2>{recipe.title}</h2>
+      {!postId && (recipe.is_public ? <p>(Shared)</p> : <p>(Private)</p>)}
       {recipe?.description ? <p>{recipe.description}</p> : null}
       <h3>Macronutrients</h3>
       <ul>
@@ -55,14 +56,6 @@ export default function RecipeCard({ recipe, recipeList, setRecipeList, savedRec
           <button className="recipe-edit-button" onClick={() => setIsOpen(true)}>
             Edit Recipe
           </button>
-          <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-            <EditRecipe
-              recipe={recipe}
-              recipeList={recipeList}
-              setRecipeList={setRecipeList}
-              setIsOpen={setIsOpen}
-            />
-          </Modal>
           <DeleteRecipe
             id={recipe.id}
             recipeList={recipeList}
@@ -79,5 +72,14 @@ export default function RecipeCard({ recipe, recipeList, setRecipeList, savedRec
         }
       </div>
     </div>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <EditRecipe
+          recipe={recipe}
+          recipeList={recipeList}
+          setRecipeList={setRecipeList}
+          setIsOpen={setIsOpen}
+        />
+      </Modal>
+    </>
   );
 }

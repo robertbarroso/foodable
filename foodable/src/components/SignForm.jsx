@@ -60,6 +60,18 @@ function SignUpForm() {
   const handleSignUp = async (event) => {
     event.preventDefault();
 
+    // Username validation
+    if (usernameSignUp.length < 6) {
+      toast.error("Username must be at least 6 characters.");
+      return;
+    }
+
+    // Password validation
+    if (passwordSignUp.length < 8) {
+      toast.error("Password must be at least 8 characters.");
+      return;
+    }
+
     try {
       const signupForm = {
         firstName,
@@ -171,7 +183,7 @@ function SignUpForm() {
           <input
             className="sign-up-textfield"
             id="signup-email-input"
-            type="text"
+            type="email"
             value={emailSignUp}
             onChange={handleEmailSignUp}
             placeholder="Email"
