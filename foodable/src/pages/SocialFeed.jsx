@@ -50,6 +50,7 @@ export default function SocialFeed() {
   const [showProfile, setShowProfile] = useState(false);
 
   const { currentUser } = selectUser();
+
   async function loadCommunity() {
     try {
       setLoading(true);
@@ -167,12 +168,12 @@ export default function SocialFeed() {
       <section id="post-list">
         <div className="community-header">
           <h3 className="community-title">Feed</h3>
-          <button
+          {currentUser?.id && <button
             className="profile-button"
             onClick={() => setShowProfile(true)}
           >
             View Profile
-          </button>
+          </button>}
 
           <SocialSearch searchText={searchText} setSearchText={setSearchText} />
         </div>
