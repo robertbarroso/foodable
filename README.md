@@ -12,6 +12,10 @@ foodable/                 # repo root
 │   │   ├── pages/        # GroceryList, SocialFeed, AIChatbot, RecipeList
 │   │   └── services/     # supabase.js, groceryLists.js
 │   └── package.json
+├── server/                # Node.js/Express backend
+│   ├── routes/           # auth.js, chat.js, etc.
+│   ├── middleware/       # requireAuth.js
+|   └── supabase.js       # Supabase database
 ├── docs/                 # Schema and feature docs
 ├── README.md
 └── STANDARDS.md
