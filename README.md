@@ -83,7 +83,7 @@ cd foodable
 npm run dev
 ```
 
-Open http://localhost:5173 — use `/groceries` for the grocery list page.
+Open http://localhost:5173
 
 ## Grocery list docs
 
