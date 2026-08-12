@@ -48,7 +48,7 @@ Add the frontend configuration to `foodable/.env`:
 ```
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_KEY=your-anon-key
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:5001/api
 ```
 
 Add the server configuration to `server/.env`:
